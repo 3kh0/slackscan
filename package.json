@@ -1,0 +1,26 @@
+{
+  "name": "slackscan",
+  "version": "1.0.0",
+  "description": "slack bot for something",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "scan": "node scripts/scan.js",
+    "index": "node scripts/channel_index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.12.1+sha512.f0dda8580f0ee9481c5c79a1d927b9164f2c478e90992ad268bbb2465a736984391d6333d2c327913578b2804af33474ca554ba29c04a8b13060a717675ae3ac",
+  "dependencies": {
+    "@slack/bolt": "^4.4.0",
+    "@slack/web-api": "^7.9.2",
+    "chalk": "4",
+    "dotenv": "^16.5.0",
+    "node-cron": "^4.1.0",
+    "nodemon": "^3.1.10",
+    "pg": "^8.11.3",
+    "pg-promise": "^11.5.4"
+  }
+}
