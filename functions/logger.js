@@ -1,4 +1,9 @@
-const chalk = require("chalk");
+let chalk;
+
+(async () => {
+  chalk = (await import("chalk")).default;
+})();
+
 // making terminal logs pretty again
 const log = {
   error: (msg) => {
