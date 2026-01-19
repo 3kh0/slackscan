@@ -89,9 +89,28 @@ app.message(async ({ message, client }) => {
     const text = message.text?.trim();
     const userId = text?.match(/^<@([A-Z0-9]+)>$|^(U[A-Z0-9]{8,})$/);
     const channelId = text?.match(/^<#(C[A-Z0-9]+)(?:\|[^>]*)?>$|^(C[A-Z0-9]{8,})$/);
+    const groupId = text?.match(/^<!subteam\^(S[A-Z0-9]+)(?:\|[^>]*)?>$|^(S[A-Z0-9]{8,})$/);
+    const groupName = text?.match(/^@?([\w-]+)$/);
     const x = userId ? (userId[1] || userId[2]) : null;
+    const ugid = groupId ? (groupId[1] || groupId[2]) : null;
 
-    if (channelId) {
+    if (ugid) {
+      const groups = await client.usergroups.list();
+      const group = groups.usergroups?.find(g => g.id === ugid);
+      if (group) {
+        await client.chat.postMessage({
+          channel: message.channel,
+          thread_ts: message.ts,
+          text: `User group: *${group.name}* (\`${group.handle}\`)\nID: \`${ugid}\``,
+        });
+      } else {
+        await client.chat.postMessage({
+          channel: message.channel,
+          thread_ts: message.ts,
+          text: `User group ID: \`${ugid}\` (group not found)`,
+        });
+      }
+    } else if (channelId) {
       const cid = channelId[1] || channelId[2];
       await client.chat.postMessage({
         channel: message.channel,
@@ -105,6 +124,20 @@ app.message(async ({ message, client }) => {
         thread_ts: message.ts,
         ...response,
       });
+    } else if (groupName && groupName[1]) {
+      const searchHandle = groupName[1].toLowerCase();
+      const groups = await client.usergroups.list();
+      const group = groups.usergroups?.find(g => 
+        g.handle.toLowerCase() === searchHandle || 
+        g.name.toLowerCase() === searchHandle
+      );
+      if (group) {
+        await client.chat.postMessage({
+          channel: message.channel,
+          thread_ts: message.ts,
+          text: `User group: *${group.name}* (\`@${group.handle}\`)\nID: \`${group.id}\``,
+        });
+      }
     } else {
       const response = await getUsr(message.user, client);
       await client.chat.postMessage({
