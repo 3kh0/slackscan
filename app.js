@@ -116,20 +116,23 @@ app.message(async ({ message, client }) => {
         thread_ts: message.ts,
         text: `<#${cid}>`,
       });
-    } else if (x) {
-      const response = await getUsr(x, client);
-      await client.chat.postMessage({
-        channel: message.channel,
-        thread_ts: message.ts,
-        ...response,
-      });
     } else {
-      const response = await getUsr(message.user, client);
-      await client.chat.postMessage({
-        channel: message.channel,
-        thread_ts: message.ts,
-        ...response,
-      });
+      const targetId = x || message.user;
+      const response = await getUsr(targetId, client);
+      if (response.text?.includes("couldn't find that user") && x) {
+        const fallback = await getUsr(message.user, client);
+        await client.chat.postMessage({
+          channel: message.channel,
+          thread_ts: message.ts,
+          ...fallback,
+        });
+      } else {
+        await client.chat.postMessage({
+          channel: message.channel,
+          thread_ts: message.ts,
+          ...response,
+        });
+      }
     }
   } catch (error) {
     log.error(`Error replying with Slack ID: ${error.message}`);
