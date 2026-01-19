@@ -81,6 +81,41 @@ app.message(async ({ message, client, say }) => {
   await say(response);
 });
 
+app.message(async ({ message, client }) => {
+  if (message.channel !== "C0159TSJVH8" || message.bot_id) return;
+
+  try {
+    const text = message.text?.trim();
+    const userId = text?.match(/^<@([A-Z0-9]+)>$|^(U[A-Z0-9]{8,})$/);
+    const channelId = text?.match(/^(C[A-Z0-9]{8,})$/);
+    const x = userId ? (userId[1] || userId[2]) : null;
+
+    if (channelId) {
+      await client.chat.postMessage({
+        channel: message.channel,
+        thread_ts: message.ts,
+        text: `<#${channelId[1]}>`,
+      });
+    } else if (x) {
+      const response = await getUsr(x, client);
+      await client.chat.postMessage({
+        channel: message.channel,
+        thread_ts: message.ts,
+        ...response,
+      });
+    } else {
+      const response = await getUsr(message.user, client);
+      await client.chat.postMessage({
+        channel: message.channel,
+        thread_ts: message.ts,
+        ...response,
+      });
+    }
+  } catch (error) {
+    log.error(`Error replying with Slack ID: ${error.message}`);
+  }
+});
+
 app.command("/scan", async ({ command, ack, respond, client }) => {
   await ack();
   try {
