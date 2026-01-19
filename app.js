@@ -81,20 +81,22 @@ app.message(async ({ message, client, say }) => {
   await say(response);
 });
 
+// #what-is-my-slack-id
 app.message(async ({ message, client }) => {
   if (message.channel !== "C0159TSJVH8" || message.bot_id || message.thread_ts) return;
 
   try {
     const text = message.text?.trim();
     const userId = text?.match(/^<@([A-Z0-9]+)>$|^(U[A-Z0-9]{8,})$/);
-    const channelId = text?.match(/^(C[A-Z0-9]{8,})$/);
+    const channelId = text?.match(/^<#(C[A-Z0-9]+)(?:\|[^>]*)?>$|^(C[A-Z0-9]{8,})$/);
     const x = userId ? (userId[1] || userId[2]) : null;
 
     if (channelId) {
+      const cid = channelId[1] || channelId[2];
       await client.chat.postMessage({
         channel: message.channel,
         thread_ts: message.ts,
-        text: `<#${channelId[1]}>`,
+        text: `<#${cid}>`,
       });
     } else if (x) {
       const response = await getUsr(x, client);
