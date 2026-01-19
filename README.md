@@ -5,7 +5,7 @@
 
 Inspired by the popular bot on Telegram, [TgScan](https://tgdev.io/tgscan/), SlackScan can index channels and their members to provide information about what channels a user is in.
 
-As a Hack Club exclusive, you can also look up a user's status in [Identity Vault](https://identity.hackclub.com/faq) if their Slack ID is linked to their IDV account.
+As a Hack Club exclusive, you can also look up a user's status in [Hack Club Account](https://auth.hackclub.com/) if their Slack ID is linked to their HCA account.
 
 Using SlackScan is easy as DMing the bot a user mention (if you are in the Hack Club Slack) or using the `/scan` command anywhere in your workspace.
 
@@ -16,7 +16,7 @@ Using SlackScan is easy as DMing the bot a user mention (if you are in the Hack 
 - Yoinks channels
 - Yoinks members in said channels
 - If people are schizo about privacy, you can opt out
-- If you're in Hack Club, you can look up people's IDV status
+- If you're in Hack Club, you can look up people's HCA status
 - Find people's username, which commonly includes part of their real email (not a bug, just a feature)
 - Better than stalking people manually
 

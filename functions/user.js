@@ -13,7 +13,7 @@ async function check(userId) {
     const data = await response.json();
     return data.result || "unknown";
   } catch (err) {
-    log.error(`epic idv fail ${err.message}`);
+    log.error(`epic hca fail ${err.message}`);
     return "unknown";
   }
 }
@@ -26,18 +26,18 @@ async function getUsr(id, client, channelsOnly = false) {
       user: id,
     });
     const isOptedOut = await getUserOptOutStatus(id);
-    const idvStatus = await check(id);
+    const hcaStatus = await check(id);
 
     if (isOptedOut) {
-      return formatOut(res.user, start, idvStatus);
+      return formatOut(res.user, start, hcaStatus);
     }
 
     const channels = await getChRespectingPrivacy(id);
 
     if (channelsOnly) {
-      return formatChsOnly(res.user, channels, start, idvStatus);
+      return formatChsOnly(res.user, channels, start, hcaStatus);
     } else {
-      return formatUsr(res.user, channels, start, idvStatus);
+      return formatUsr(res.user, channels, start, hcaStatus);
     }
   } catch (err) {
     log.error(`fail on return ${err.message}`);

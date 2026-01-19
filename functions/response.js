@@ -5,7 +5,7 @@ function silent(user) {
   return `<https://hackclub.enterprise.slack.com/team/${user.id}|@${name}>`;
 }
 
-function formatUsr(user, channels = [], start = null, idvStatus = null) {
+function formatUsr(user, channels = [], start = null, hcaStatus = null) {
   try {
     const executionStart = start || new Date();
     const blocks = [
@@ -29,7 +29,7 @@ function formatUsr(user, channels = [], start = null, idvStatus = null) {
             user.profile.display_name || "Not set"
           }\n*Real Name:* ${user.real_name || "Not set"}\n*Username:* ${
             user.name
-          }${idvStatus ? `\n*IDV Status:* ${idvStatus}` : ""}`,
+          }${hcaStatus ? `\n*HCA Status:* ${hcaStatus}` : ""}`,
         },
         accessory: {
           type: "image",
@@ -143,7 +143,7 @@ function formatErr(msg = "An unknown error occurred") {
   };
 }
 
-function formatChsOnly(user, channels = [], start = null, idvStatus = null) {
+function formatChsOnly(user, channels = [], start = null, hcaStatus = null) {
   try {
     const executionStart = start || new Date();
     const blocks = [
@@ -151,7 +151,7 @@ function formatChsOnly(user, channels = [], start = null, idvStatus = null) {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `Channels for ${silent(user)} (${user.real_name || user.name})${idvStatus ? ` - IDV: ${idvStatus}` : ""}`,
+          text: `Channels for ${silent(user)} (${user.real_name || user.name})${hcaStatus ? ` - HCA: ${hcaStatus}` : ""}`,
         },
       },
       {
@@ -257,7 +257,7 @@ function formatChsOnly(user, channels = [], start = null, idvStatus = null) {
   }
 }
 
-function formatOut(user, start = null, idvStatus = null) {
+function formatOut(user, start = null, hcaStatus = null) {
   try {
     const executionStart = start || new Date();
     const blocks = [
@@ -281,7 +281,7 @@ function formatOut(user, start = null, idvStatus = null) {
             user.profile.display_name || "Not set"
           }\n*Real Name:* ${user.real_name || "Not set"}\n*Username:* ${
             user.name
-          }${idvStatus ? `\n*IDV Status:* ${idvStatus}` : ""}`,
+          }${hcaStatus ? `\n*HCA Status:* ${hcaStatus}` : ""}`,
         },
         accessory: {
           type: "image",
