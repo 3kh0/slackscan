@@ -36,7 +36,7 @@ function formatUsr(user, channels = [], start = null, idvStatus = null) {
 
     if (channels && channels.length > 0) {
       const mentions = channels.map((c) => `<#${c}>`);
-      let text = `*Channels (${channels.length}):*\n`;
+      let text = `*Seen in (${channels.length}):*\n_Note: They may have left some channels_\n`;
       let truncated = false;
       let included = 0;
 
@@ -82,11 +82,11 @@ function formatUsr(user, channels = [], start = null, idvStatus = null) {
             type: "section",
             text: {
               type: "mrkdwn",
-              text: `*Channels (${count}):* ${mentions
+              text: `*Seen in (${count}):* _User may have left some_\n${mentions
                 .slice(0, 50)
                 .join(", ")}${
                 count - 50 > 0
-                  ? ` _(${count - 50} more channels truncated)_`
+                  ? ` _(${count - 50} more truncated)_`
                   : ""
               }`,
             },
@@ -100,7 +100,7 @@ function formatUsr(user, channels = [], start = null, idvStatus = null) {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: "*Channels (0):* No channel data available",
+          text: "*Seen in (0):* No channel data available :(",
         },
       });
     }
@@ -114,7 +114,7 @@ function formatUsr(user, channels = [], start = null, idvStatus = null) {
         elements: [
           {
             type: "mrkdwn",
-            text: `Executed in ${new Date() - executionStart}ms - You can use me via DMs and /scan!`,
+            text: `${new Date() - executionStart}ms - You can use me via DMs and /scan!`,
           },
         ],
       }
@@ -156,7 +156,7 @@ function formatChsOnly(user, channels = [], start = null, idvStatus = null) {
 
     if (channels && channels.length > 0) {
       const mentions = channels.map((c) => `<#${c}>`);
-      let text = `*Channels (${channels.length}):*\n`;
+      let text = `*Seen in (${channels.length}):*\n_Note: They may have left some channels_\n`;
       let truncated = false;
       let included = 0;
 
@@ -202,11 +202,11 @@ function formatChsOnly(user, channels = [], start = null, idvStatus = null) {
             type: "section",
             text: {
               type: "mrkdwn",
-              text: `*Channels (${count}):* ${mentions
+              text: `*Seen in (${count}):* _They may have left some channels_\n${mentions
                 .slice(0, 160)
                 .join(", ")}${
                 count - 150 > 0
-                  ? ` _(${count - 150} more channels truncated)_`
+                  ? ` _(${count - 150} more truncated)_`
                   : ""
               }`,
             },
@@ -220,7 +220,7 @@ function formatChsOnly(user, channels = [], start = null, idvStatus = null) {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: "*Channels (0):* No channel data available",
+          text: "*Seen in (0):* No channel data available :(",
         },
       });
     }
@@ -242,7 +242,7 @@ function formatChsOnly(user, channels = [], start = null, idvStatus = null) {
 
     return {
       blocks: blocks,
-      text: `Channels for ${user.real_name || user.name}`,
+      text: `Seen in ${user.real_name || user.name}`,
     };
   } catch (err) {
     log.error(`Error formatting channels-only response: ${err.message}`);
@@ -288,7 +288,7 @@ function formatOut(user, start = null, idvStatus = null) {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: "*Channels:* This user has opted to keep this data private",
+          text: "*Seen in:* This user has opted to keep this data private",
         },
       },
       {
