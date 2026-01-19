@@ -82,7 +82,7 @@ app.message(async ({ message, client, say }) => {
 });
 
 app.message(async ({ message, client }) => {
-  if (message.channel !== "C0159TSJVH8" || message.bot_id) return;
+  if (message.channel !== "C0159TSJVH8" || message.bot_id || message.thread_ts) return;
 
   try {
     const text = message.text?.trim();
