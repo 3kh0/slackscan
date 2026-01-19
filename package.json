@@ -22,6 +22,6 @@
     "nodemon": "^3.1.11",
     "pg": "^8.17.1",
     "pg-promise": "^12.3.0",
-    "pg-query-stream": "^4.11.1"
+    "pg-query-stream": "^4.10.3"
   }
 }

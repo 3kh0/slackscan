@@ -31,10 +31,10 @@ importers:
         version: 8.17.1
       pg-promise:
         specifier: ^12.3.0
-        version: 12.3.0(pg-query-stream@4.11.1(pg@8.17.1))
+        version: 12.3.0(pg-query-stream@4.10.3(pg@8.17.1))
       pg-query-stream:
-        specifier: ^4.11.1
-        version: 4.11.1(pg@8.17.1)
+        specifier: ^4.10.3
+        version: 4.10.3(pg@8.17.1)
 
 packages:
 
@@ -518,8 +518,8 @@ packages:
   pg-protocol@1.11.0:
     resolution: {integrity: sha512-pfsxk2M9M3BuGgDOfuy37VNRRX3jmKgMjcvAcWqNDpZSf4cUmv8HSOl5ViRQFsfARFn0KuUQTgLxVMbNq5NW3g==}
 
-  pg-query-stream@4.11.1:
-    resolution: {integrity: sha512-JF8xvSq/F+0u39Axw7BwlpNiDLkAb26bkDI6t8lMRL1/q7QE6oHoi969hu4v6QAqNZnBKjb40038As5k7xhSMw==}
+  pg-query-stream@4.10.3:
+    resolution: {integrity: sha512-h2utrzpOIzeT9JfaqfvBbVuvCfBjH86jNfVrGGTbyepKAIOyTfDew0lAt8bbJjs9n/I5bGDl7S2sx6h5hPyJxw==}
     peerDependencies:
       pg: ^8
 
@@ -1245,19 +1245,19 @@ snapshots:
     dependencies:
       pg: 8.17.1
 
-  pg-promise@12.3.0(pg-query-stream@4.11.1(pg@8.17.1)):
+  pg-promise@12.3.0(pg-query-stream@4.10.3(pg@8.17.1)):
     dependencies:
       assert-options: 0.8.3
       pg: 8.16.3
       pg-minify: 1.8.0
-      pg-query-stream: 4.11.1(pg@8.17.1)
+      pg-query-stream: 4.10.3(pg@8.17.1)
       spex: 4.1.0
     transitivePeerDependencies:
       - pg-native
 
   pg-protocol@1.11.0: {}
 
-  pg-query-stream@4.11.1(pg@8.17.1):
+  pg-query-stream@4.10.3(pg@8.17.1):
     dependencies:
       pg: 8.17.1
       pg-cursor: 2.16.1(pg@8.17.1)
