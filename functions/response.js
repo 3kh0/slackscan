@@ -1,5 +1,10 @@
 const log = require("./logger");
 
+function silent(user) {
+  const name = user.profile?.display_name || user.real_name || user.name || user.id;
+  return `<https://hackclub.enterprise.slack.com/team/${user.id}|@${name}>`;
+}
+
 function formatUsr(user, channels = [], start = null, idvStatus = null) {
   try {
     const executionStart = start || new Date();
@@ -18,7 +23,7 @@ function formatUsr(user, channels = [], start = null, idvStatus = null) {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `*Looking up <@${user.id}>*\n\n*Slack ID: *\`${
+          text: `*Looking up ${silent(user)}*\n\n*Slack ID: *\`${
             user.id
           }\`\n*Display Name:* ${
             user.profile.display_name || "Not set"
@@ -122,7 +127,7 @@ function formatUsr(user, channels = [], start = null, idvStatus = null) {
 
     return {
       blocks: blocks,
-      text: `User information for <@${user.id}>`,
+      text: `User information for ${silent(user)}`,
     };
   } catch (err) {
     log.error(`Error formatting user response: ${err.message}`);
@@ -146,7 +151,7 @@ function formatChsOnly(user, channels = [], start = null, idvStatus = null) {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `Channels for <@${user.id}> (${user.real_name || user.name})${idvStatus ? ` - IDV: ${idvStatus}` : ""}`,
+          text: `Channels for ${silent(user)} (${user.real_name || user.name})${idvStatus ? ` - IDV: ${idvStatus}` : ""}`,
         },
       },
       {
@@ -270,7 +275,7 @@ function formatOut(user, start = null, idvStatus = null) {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `*Looking up <@${user.id}>*\n\n*Slack ID: *\`${
+          text: `*Looking up ${silent(user)}*\n\n*Slack ID: *\`${
             user.id
           }\`\n*Display Name:* ${
             user.profile.display_name || "Not set"
@@ -307,7 +312,7 @@ function formatOut(user, start = null, idvStatus = null) {
 
     return {
       blocks: blocks,
-      text: `User information for <@${user.id}> (privacy protected)`,
+      text: `User information for ${silent(user)} (privacy protected)`,
     };
   } catch (err) {
     log.error(`Error formatting opted-out user response: ${err.message}`);
