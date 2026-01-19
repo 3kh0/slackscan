@@ -117,16 +117,14 @@ app.message(async ({ message, client }) => {
         text: `<#${cid}>`,
       });
     } else {
-      const targetId = x || message.user;
-      const response = await getUsr(targetId, client);
-      if (response.text?.includes("couldn't find that user") && x) {
-        const fallback = await getUsr(message.user, client);
-        await client.chat.postMessage({
-          channel: message.channel,
-          thread_ts: message.ts,
-          ...fallback,
-        });
-      } else {
+      let response;
+      if (x) {
+        response = await getUsr(x, client);
+      }
+      if (!response?.blocks) {
+        response = await getUsr(message.user, client);
+      }
+      if (response?.blocks) {
         await client.chat.postMessage({
           channel: message.channel,
           thread_ts: message.ts,
