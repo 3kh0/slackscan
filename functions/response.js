@@ -114,7 +114,7 @@ function formatUsr(user, channels = [], start = null, idvStatus = null) {
         elements: [
           {
             type: "mrkdwn",
-            text: `Executed in ${new Date() - executionStart}ms`,
+            text: `Executed in ${new Date() - executionStart}ms - You can use me via DMs and /scan!`,
           },
         ],
       }
