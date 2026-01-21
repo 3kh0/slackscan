@@ -17,69 +17,63 @@ const app = new App({
 });
 
 app.message(async ({ message, client, say }) => {
-  const messageTs = parseFloat(message.ts) * 1000;
-  if (message.channel_type !== "im" || message.bot_id) return;
+  try {
+    const messageTs = parseFloat(message.ts) * 1000;
+    if (message.channel_type !== "im" || message.bot_id || !message.text) return;
 
-  const text = message.text.trim();
-  const userId = message.user;
-  if (text === "-h" || text === "--help" || text === "help") {
-    await say(showHelp());
-    return;
-  }
+    const text = message.text.trim();
+    const userId = message.user;
 
-  if (text === "optout") {
-    const success = await setUserOptOut(userId, true);
-    if (success) {
-      await say({
-        text: ":okay-1: You are out! Others will not be able to see what public channels you are in.",
-      });
-    } else {
-      await say(
-        formatErr(
-          ":red-x: Ruh ro, something broke, give it another go?"
-        )
-      );
-    }
-    return;
-  }
-
-  if (text === "optin") {
-    const success = await setUserOptOut(userId, false);
-    if (success) {
-      await say({
-        text: ":okay-1: Your back in! Others will be able to see what public channels you are in.",
-      });
-    } else {
-      await say(
-        formatErr(
-          ":red-x: Ruh ro, something broke, give it another go?"
-        )
-      );
-    }
-    return;
-  }
-
-  const parts = text.split(" ");
-  let targetUserId = null;
-  let showChannelsOnly = false;
-
-  for (let i = 0; i < parts.length; i++) {
-    const part = parts[i];
-
-    if (part === "-c" || part === "--channels") {
-      showChannelsOnly = true;
-      continue;
+    if (text === "-h" || text === "--help" || text === "help") {
+      await say(showHelp());
+      return;
     }
 
-    if (!targetUserId) {
-      targetUserId = getId(part);
+    if (text === "optout") {
+      const success = await setUserOptOut(userId, true);
+      if (success) {
+        await say({
+          text: ":okay-1: You are out! Others will not be able to see what public channels you are in.",
+        });
+      } else {
+        await say(formatErr(":red-x: Ruh ro, something broke, give it another go?"));
+      }
+      return;
     }
+
+    if (text === "optin") {
+      const success = await setUserOptOut(userId, false);
+      if (success) {
+        await say({
+          text: ":okay-1: Your back in! Others will be able to see what public channels you are in.",
+        });
+      } else {
+        await say(formatErr(":red-x: Ruh ro, something broke, give it another go?"));
+      }
+      return;
+    }
+
+    const parts = text.split(" ");
+    let targetUserId = null;
+    let showChannelsOnly = false;
+
+    for (const part of parts) {
+      if (part === "-c" || part === "--channels") {
+        showChannelsOnly = true;
+        continue;
+      }
+      if (!targetUserId) {
+        targetUserId = getId(part);
+      }
+    }
+
+    if (!targetUserId) return;
+
+    const response = await getUsr(targetUserId, client, showChannelsOnly, messageTs);
+    await say(response);
+  } catch (error) {
+    log.error(`dm err: ${error.message} (user: ${message.user}, subtype: ${message.subtype || "none"})`);
   }
-
-  if (!targetUserId) return;
-
-  const response = await getUsr(targetUserId, client, showChannelsOnly, messageTs);
-  await say(response);
 });
 
 // #what-is-my-slack-id

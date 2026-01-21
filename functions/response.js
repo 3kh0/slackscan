@@ -5,9 +5,37 @@ function silent(user) {
   return `<https://hackclub.enterprise.slack.com/team/${user.id}|@${name}>`;
 }
 
+function d(user) {
+  const startDate = user.profile?.start_date;
+  if (!startDate) return null;
+  
+  const date = new Date(startDate + "T00:00:00");
+  const now = new Date();
+  const diffMs = now - date;
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  
+  const dateStr = date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  
+  if (diffDays < 0) return dateStr;
+  if (diffDays < 1) return `${dateStr} (today)`;
+  if (diffDays === 1) return `${dateStr} (1 day ago)`;
+  if (diffDays < 30) return `${dateStr} (${diffDays} days ago)`;
+  if (diffDays < 365) {
+    const months = Math.floor(diffDays / 30);
+    return `${dateStr} (${months} month${months > 1 ? "s" : ""} ago)`;
+  }
+  const years = Math.floor(diffDays / 365);
+  const r = Math.floor((diffDays % 365) / 30);
+  if (r > 0) {
+    return `${dateStr} (${years}y ${r}mo ago)`;
+  }
+  return `${dateStr} (${years} year${years > 1 ? "s" : ""} ago)`;
+}
+
 export function formatUsr(user, channels = [], start = null, hcaStatus = null) {
   try {
     const executionStart = start || Date.now();
+    const startDate = d(user);
     const blocks = [
       {
         type: "header",
@@ -29,7 +57,7 @@ export function formatUsr(user, channels = [], start = null, hcaStatus = null) {
             user.profile.display_name || "Not set"
           }\n*Real Name:* ${user.real_name || "Not set"}\n*Username:* ${
             user.name
-          }${hcaStatus && hcaStatus !== "unknown" ? `\n*HCA Status:* ${hcaStatus}` : ""}`,
+          }${startDate ? `\n*Joined:* ${startDate}` : ""}${hcaStatus && hcaStatus !== "unknown" ? `\n*HCA Status:* ${hcaStatus}` : ""}`,
         },
         accessory: {
           type: "image",
@@ -146,12 +174,13 @@ export function formatErr(msg = "An unknown error occurred") {
 export function formatChsOnly(user, channels = [], start = null, hcaStatus = null) {
   try {
     const executionStart = start || Date.now();
+    const startDate = d(user);
     const blocks = [
       {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `Channels for ${silent(user)} (${user.real_name || user.name})${hcaStatus && hcaStatus !== "unknown" ? ` - HCA: ${hcaStatus}` : ""}`,
+          text: `Channels for ${silent(user)} (${user.real_name || user.name})${startDate ? ` - Joined: ${startDate}` : ""}${hcaStatus && hcaStatus !== "unknown" ? ` - HCA: ${hcaStatus}` : ""}`,
         },
       },
       {
@@ -260,6 +289,7 @@ export function formatChsOnly(user, channels = [], start = null, hcaStatus = nul
 export function formatOut(user, start = null, hcaStatus = null) {
   try {
     const executionStart = start || Date.now();
+    const startDate = d(user);
     const blocks = [
       {
         type: "header",
@@ -281,7 +311,7 @@ export function formatOut(user, start = null, hcaStatus = null) {
             user.profile.display_name || "Not set"
           }\n*Real Name:* ${user.real_name || "Not set"}\n*Username:* ${
             user.name
-          }${hcaStatus && hcaStatus !== "unknown" ? `\n*HCA Status:* ${hcaStatus}` : ""}`,
+          }${startDate ? `\n*Joined:* ${startDate}` : ""}${hcaStatus && hcaStatus !== "unknown" ? `\n*HCA Status:* ${hcaStatus}` : ""}`,
         },
         accessory: {
           type: "image",
