@@ -29,7 +29,7 @@ export function formatUsr(user, channels = [], start = null, hcaStatus = null) {
             user.profile.display_name || "Not set"
           }\n*Real Name:* ${user.real_name || "Not set"}\n*Username:* ${
             user.name
-          }${hcaStatus ? `\n*HCA Status:* ${hcaStatus}` : ""}`,
+          }${hcaStatus && hcaStatus !== "unknown" ? `\n*HCA Status:* ${hcaStatus}` : ""}`,
         },
         accessory: {
           type: "image",
@@ -151,7 +151,7 @@ export function formatChsOnly(user, channels = [], start = null, hcaStatus = nul
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `Channels for ${silent(user)} (${user.real_name || user.name})${hcaStatus ? ` - HCA: ${hcaStatus}` : ""}`,
+          text: `Channels for ${silent(user)} (${user.real_name || user.name})${hcaStatus && hcaStatus !== "unknown" ? ` - HCA: ${hcaStatus}` : ""}`,
         },
       },
       {
@@ -281,7 +281,7 @@ export function formatOut(user, start = null, hcaStatus = null) {
             user.profile.display_name || "Not set"
           }\n*Real Name:* ${user.real_name || "Not set"}\n*Username:* ${
             user.name
-          }${hcaStatus ? `\n*HCA Status:* ${hcaStatus}` : ""}`,
+          }${hcaStatus && hcaStatus !== "unknown" ? `\n*HCA Status:* ${hcaStatus}` : ""}`,
         },
         accessory: {
           type: "image",

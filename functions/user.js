@@ -4,17 +4,29 @@ import {
   formatChsOnly,
   formatOut,
 } from "./response.js";
-import { getCh, getUserOptOutStatus } from "./db.js";
+import { getUserData } from "./db.js";
 import log from "./logger.js";
 
 export async function check(userId) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 1000);
+  
   try {
-    const response = await fetch(`https://identity.hackclub.com/api/external/check?slack_id=${userId}`);
+    const response = await fetch(
+      `https://identity.hackclub.com/api/external/check?slack_id=${userId}`,
+      { signal: controller.signal }
+    );
+    clearTimeout(timeout);
     const data = await response.json();
     return data.result || "unknown";
   } catch (err) {
-    log.error(`epic hca fail ${err.message}`);
-    return "unknown";
+    clearTimeout(timeout);
+    if (err.name === 'AbortError') {
+      log.warn(`hca timeout for ${userId}`);
+    } else {
+      log.error(`epic hca fail ${err.message}`);
+    }
+    return null;
   }
 }
 
@@ -22,14 +34,15 @@ export async function getUsr(id, client, channelsOnly = false, messageTs = null)
   const start = messageTs || Date.now();
 
   try {
-    const [res, isOptedOut, hcaStatus, channels] = await Promise.all([
+    const [res, userData, hcaStatus] = await Promise.all([
       client.users.info({ user: id }),
-      getUserOptOutStatus(id),
+      getUserData(id),
       check(id),
-      getCh(id),
     ]);
 
-    if (isOptedOut) {
+    const { channels, optedOut } = userData;
+
+    if (optedOut) {
       return formatOut(res.user, start, hcaStatus);
     }
 

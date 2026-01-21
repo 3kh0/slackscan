@@ -95,6 +95,25 @@ export async function getCh(uid) {
   }
 }
 
+export async function getUserData(uid) {
+  try {
+    const u = await db.oneOrNone(
+      "SELECT channels, opted_out FROM users WHERE slack_uid = $1",
+      [uid]
+    );
+
+    if (!u) return { channels: [], optedOut: false };
+
+    return {
+      channels: u.channels?.map((ch) => ch[0]) || [],
+      optedOut: u.opted_out || false,
+    };
+  } catch (e) {
+    log.error(`fail on getting user data for ${uid}: ${e.message}`);
+    return { channels: [], optedOut: false };
+  }
+}
+
 export async function getChRespectingPrivacy(uid) {
   try {
     const isOptedOut = await getUserOptOutStatus(uid);
