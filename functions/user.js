@@ -4,7 +4,7 @@ const {
   formatChsOnly,
   formatOut,
 } = require("./response");
-const { getChRespectingPrivacy, getUserOptOutStatus } = require("./db");
+const { getCh, getUserOptOutStatus } = require("./db");
 const log = require("./logger");
 
 async function check(userId) {
@@ -22,17 +22,17 @@ async function getUsr(id, client, channelsOnly = false) {
   const start = new Date();
 
   try {
-    const res = await client.users.info({
-      user: id,
-    });
-    const isOptedOut = await getUserOptOutStatus(id);
-    const hcaStatus = await check(id);
+    const [res, isOptedOut, hcaStatus] = await Promise.all([
+      client.users.info({ user: id }),
+      getUserOptOutStatus(id),
+      check(id),
+    ]);
 
     if (isOptedOut) {
       return formatOut(res.user, start, hcaStatus);
     }
 
-    const channels = await getChRespectingPrivacy(id);
+    const channels = await getCh(id);
 
     if (channelsOnly) {
       return formatChsOnly(res.user, channels, start, hcaStatus);
