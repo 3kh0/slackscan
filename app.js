@@ -96,6 +96,11 @@ app.message(async ({ message, client }) => {
     if (ugid) {
       const groups = await client.usergroups.list();
       const group = groups.usergroups?.find(g => g.id === ugid);
+      await client.chat.postMessage({
+        channel: message.channel,
+        thread_ts: message.ts,
+        text: ugid,
+      });
       if (group) {
         await client.chat.postMessage({
           channel: message.channel,
@@ -114,10 +119,16 @@ app.message(async ({ message, client }) => {
       await client.chat.postMessage({
         channel: message.channel,
         thread_ts: message.ts,
+        text: cid,
+      });
+      await client.chat.postMessage({
+        channel: message.channel,
+        thread_ts: message.ts,
         text: `<#${cid}>`,
       });
     } else {
       let response;
+      const targetId = x || message.user;
       if (x) {
         response = await getUsr(x, client);
       }
@@ -125,6 +136,11 @@ app.message(async ({ message, client }) => {
         response = await getUsr(message.user, client);
       }
       if (response?.blocks) {
+        await client.chat.postMessage({
+          channel: message.channel,
+          thread_ts: message.ts,
+          text: targetId,
+        });
         await client.chat.postMessage({
           channel: message.channel,
           thread_ts: message.ts,
