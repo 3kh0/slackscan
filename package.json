@@ -3,25 +3,23 @@
   "version": "1.0.0",
   "description": "slack bot for something",
   "main": "app.js",
+  "type": "module",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js",
-    "scan": "node scripts/scan.js",
-    "index": "node scripts/channel_index.js"
+    "start": "bun run app.js",
+    "dev": "bun --watch app.js",
+    "scan": "bun run scripts/scan.js",
+    "index": "bun run scripts/channel_index.js"
   },
-  "keywords": [],
-  "author": "",
+  "author": "3kh0",
   "license": "ISC",
-  "packageManager": "pnpm@10.28.0+sha512.05df71d1421f21399e053fde567cea34d446fa02c76571441bfc1c7956e98e363088982d940465fd34480d4d90a0668bc12362f8aa88000a64e83d0b0e47be48",
   "dependencies": {
     "@slack/bolt": "^4.6.0",
     "@slack/web-api": "^7.13.0",
     "chalk": "^5.6.2",
     "dotenv": "^17.2.3",
     "node-cron": "^4.2.1",
-    "nodemon": "^3.1.11",
-    "pg": "^8.17.1",
+    "pg": "^8.17.2",
     "pg-promise": "^12.3.0",
-    "pg-query-stream": "^4.10.3"
+    "pg-query-stream": "^4.11.2"
   }
 }
