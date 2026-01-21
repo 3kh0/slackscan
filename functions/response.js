@@ -119,7 +119,7 @@ export function formatUsr(user, channels = [], start = null, hcaStatus = null) {
         elements: [
           {
             type: "mrkdwn",
-            text: `${Date.now() - executionStart}ms - You can use me via DMs and /scan!`,
+            text: `${Math.round(Date.now() - executionStart)}ms - You can use me via DMs and /scan!`,
           },
         ],
       }
@@ -239,7 +239,7 @@ export function formatChsOnly(user, channels = [], start = null, hcaStatus = nul
         elements: [
           {
             type: "mrkdwn",
-            text: `Executed in ${Date.now() - executionStart}ms`,
+            text: `Executed in ${Math.round(Date.now() - executionStart)}ms`,
           },
         ],
       }
@@ -304,7 +304,7 @@ export function formatOut(user, start = null, hcaStatus = null) {
         elements: [
           {
             type: "mrkdwn",
-            text: `Executed in ${Date.now() - executionStart}ms`,
+            text: `Executed in ${Math.round(Date.now() - executionStart)}ms`,
           },
         ],
       },
