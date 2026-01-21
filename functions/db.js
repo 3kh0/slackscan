@@ -1,12 +1,14 @@
-const pgp = require("pg-promise")();
-const log = require("./logger");
+import pgPromise from "pg-promise";
+import log from "./logger.js";
+
+const pgp = pgPromise();
 
 const db = pgp(
   process.env.DATABASE_URL ||
     "postgres://slackscan:slackscanpass@localhost:5432/slackscan"
 );
 
-async function testDb() {
+export async function testDb() {
   try {
     const r = await db.one("SELECT NOW() as time");
     log.db(`tapped in ${r.time}`);
@@ -17,11 +19,11 @@ async function testDb() {
   }
 }
 
-function getTime() {
+export function getTime() {
   return Math.floor(Date.now() / 1000);
 }
 
-async function addCh(uid, chId) {
+export async function addCh(uid, chId) {
   try {
     const ts = getTime();
     const u = await db.oneOrNone("SELECT * FROM users WHERE slack_uid = $1", [
@@ -77,7 +79,7 @@ async function addCh(uid, chId) {
   }
 }
 
-async function getCh(uid) {
+export async function getCh(uid) {
   try {
     const u = await db.oneOrNone(
       "SELECT channels FROM users WHERE slack_uid = $1",
@@ -93,7 +95,7 @@ async function getCh(uid) {
   }
 }
 
-async function getChRespectingPrivacy(uid) {
+export async function getChRespectingPrivacy(uid) {
   try {
     const isOptedOut = await getUserOptOutStatus(uid);
     if (isOptedOut) {
@@ -108,7 +110,7 @@ async function getChRespectingPrivacy(uid) {
   }
 }
 
-async function updateCh(chId, memberIds) {
+export async function updateCh(chId, memberIds) {
   try {
     return await db.tx(async (t) => {
       const promises = memberIds.map((uid) => addCh(uid, chId));
@@ -122,7 +124,7 @@ async function updateCh(chId, memberIds) {
   }
 }
 
-async function addChannel(chId, chName, isPrivate = false) {
+export async function addChannel(chId, chName, isPrivate = false) {
   try {
     const ts = getTime();
     await db.none(
@@ -143,7 +145,7 @@ async function addChannel(chId, chName, isPrivate = false) {
   }
 }
 
-async function markScanned(chId) {
+export async function markScanned(chId) {
   try {
     const ts = getTime();
     await db.none(
@@ -161,7 +163,7 @@ async function markScanned(chId) {
   }
 }
 
-async function markUpdated(chId) {
+export async function markUpdated(chId) {
   try {
     const ts = getTime();
     await db.none(
@@ -181,7 +183,7 @@ async function markUpdated(chId) {
   }
 }
 
-async function markChannelDeleted(chId) {
+export async function markChannelDeleted(chId) {
   try {
     await db.none(
       `
@@ -198,7 +200,7 @@ async function markChannelDeleted(chId) {
   }
 }
 
-async function listAll() {
+export async function listAll() {
   try {
     return await db.manyOrNone("SELECT * FROM channels ORDER BY last_scanned");
   } catch (e) {
@@ -207,7 +209,7 @@ async function listAll() {
   }
 }
 
-async function listOldest(limit = 100) {
+export async function listOldest(limit = 100) {
   try {
     const cutoffTime = getTime() - 21600; // 6h
     const recentTime = getTime() - 300; // 5m
@@ -231,7 +233,7 @@ async function listOldest(limit = 100) {
   }
 }
 
-async function setUserOptOut(uid, optedOut = true) {
+export async function setUserOptOut(uid, optedOut = true) {
   try {
     const u = await db.oneOrNone("SELECT * FROM users WHERE slack_uid = $1", [
       uid,
@@ -255,7 +257,7 @@ async function setUserOptOut(uid, optedOut = true) {
   }
 }
 
-async function getUserOptOutStatus(uid) {
+export async function getUserOptOutStatus(uid) {
   try {
     const u = await db.oneOrNone(
       "SELECT opted_out FROM users WHERE slack_uid = $1",
@@ -267,20 +269,3 @@ async function getUserOptOutStatus(uid) {
     return false;
   }
 }
-
-module.exports = {
-  testDb,
-  getTime,
-  addCh,
-  getCh,
-  getChRespectingPrivacy,
-  updateCh,
-  addChannel,
-  markScanned,
-  markUpdated,
-  listAll,
-  listOldest,
-  markChannelDeleted,
-  setUserOptOut,
-  getUserOptOutStatus,
-};

@@ -1,11 +1,11 @@
-const log = require("./logger");
+import log from "./logger.js";
 
 function silent(user) {
   const name = user.profile?.display_name || user.real_name || user.name || user.id;
   return `<https://hackclub.enterprise.slack.com/team/${user.id}|@${name}>`;
 }
 
-function formatUsr(user, channels = [], start = null, hcaStatus = null) {
+export function formatUsr(user, channels = [], start = null, hcaStatus = null) {
   try {
     const executionStart = start || new Date();
     const blocks = [
@@ -137,13 +137,13 @@ function formatUsr(user, channels = [], start = null, hcaStatus = null) {
   }
 }
 
-function formatErr(msg = "An unknown error occurred") {
+export function formatErr(msg = "An unknown error occurred") {
   return {
     text: msg,
   };
 }
 
-function formatChsOnly(user, channels = [], start = null, hcaStatus = null) {
+export function formatChsOnly(user, channels = [], start = null, hcaStatus = null) {
   try {
     const executionStart = start || new Date();
     const blocks = [
@@ -257,7 +257,7 @@ function formatChsOnly(user, channels = [], start = null, hcaStatus = null) {
   }
 }
 
-function formatOut(user, start = null, hcaStatus = null) {
+export function formatOut(user, start = null, hcaStatus = null) {
   try {
     const executionStart = start || new Date();
     const blocks = [
@@ -321,10 +321,3 @@ function formatOut(user, start = null, hcaStatus = null) {
     };
   }
 }
-
-module.exports = {
-  formatUsr,
-  formatErr,
-  formatChsOnly,
-  formatOut,
-};

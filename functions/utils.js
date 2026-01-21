@@ -1,6 +1,6 @@
-const log = require("./logger");
+import log from "./logger.js";
 
-function getId(text) {
+export function getId(text) {
   if (text.startsWith("<@") && text.endsWith(">")) {
     return text.slice(2, -1).split("|")[0];
   }
@@ -18,9 +18,9 @@ function getId(text) {
   return null;
 }
 
-async function runChannelIndexing() {
+export async function runChannelIndexing() {
   try {
-    const { indexChannels } = require("../scripts/channel_index");
+    const { indexChannels } = await import("../scripts/channel_index.js");
     const startTime = Date.now();
     const result = await indexChannels();
     const duration = Date.now() - startTime;
@@ -41,8 +41,3 @@ async function runChannelIndexing() {
     };
   }
 }
-
-module.exports = {
-  getId,
-  runChannelIndexing,
-};

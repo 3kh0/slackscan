@@ -1,9 +1,8 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 
-const path = require("path");
-require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
-const { WebClient } = require("@slack/web-api");
-const {
+import "dotenv/config";
+import { WebClient } from "@slack/web-api";
+import {
   listAll,
   markScanned,
   markUpdated,
@@ -11,9 +10,9 @@ const {
   testDb,
   listOldest,
   markChannelDeleted,
-} = require("../functions/db");
-const { scanMembers } = require("../functions/channel");
-const log = require("../functions/logger");
+} from "../functions/db.js";
+import { scanMembers } from "../functions/channel.js";
+import log from "../functions/logger.js";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const BATCH_SIZE = 100;
@@ -212,9 +211,9 @@ async function scan() {
   };
 }
 
-module.exports = { scan };
+export { scan };
 
-if (require.main === module) {
+if (import.meta.main) {
   scan()
     .then((result) => {
       if (result && result.successes > 0) {

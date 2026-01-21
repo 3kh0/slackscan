@@ -1,8 +1,8 @@
-const { getId } = require("./utils");
-const { getUsr } = require("./user");
-const { formatErr } = require("./response");
-const { setUserOptOut, getUserOptOutStatus } = require("./db");
-const log = require("./logger");
+import { getId } from "./utils.js";
+import { getUsr } from "./user.js";
+import { formatErr } from "./response.js";
+import { setUserOptOut, getUserOptOutStatus } from "./db.js";
+import log from "./logger.js";
 
 function showHelp() {
   return {
@@ -70,7 +70,7 @@ function showHelp() {
   };
 }
 
-async function handle(cmd, client) {
+export async function handle(cmd, client) {
   const txt = cmd.text.trim();
   const userId = cmd.user_id;
 
@@ -139,7 +139,4 @@ async function handle(cmd, client) {
   return await getUsr(targetUserId, client, showChannelsOnly);
 }
 
-module.exports = {
-  handle,
-  showHelp,
-};
+export { showHelp };

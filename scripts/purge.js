@@ -1,9 +1,9 @@
-const path = require("path");
-require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
-const pgp = require("pg-promise")();
-const { WebClient } = require("@slack/web-api");
-const log = require("../functions/logger");
+import "dotenv/config";
+import pgPromise from "pg-promise";
+import { WebClient } from "@slack/web-api";
+import log from "../functions/logger.js";
 
+const pgp = pgPromise();
 const db = pgp(process.env.DATABASE_URL);
 
 const token = process.env.OAUTH_TOKEN;
@@ -144,8 +144,8 @@ async function purgeStaleData() {
 }
 
 async function purgeAndReindex() {
-  const { testDb } = require("../functions/db");
-  const { indexChannels } = require("./channel_index");
+  const { testDb } = await import("../functions/db.js");
+  const { indexChannels } = await import("./channel_index.js");
   const overallStart = Date.now();
 
   const dbOk = await testDb();
@@ -177,9 +177,9 @@ async function purgeAndReindex() {
   log.info(`  stale refs removed: ${purgeResult.refsRemoved}`);
 }
 
-module.exports = { purgeStaleData, purgeAndReindex };
+export { purgeStaleData, purgeAndReindex };
 
-if (require.main === module) {
+if (import.meta.main) {
   purgeAndReindex()
     .then(() => process.exit(0))
     .catch((err) => {

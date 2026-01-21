@@ -1,10 +1,5 @@
-let chalk;
+import chalk from "chalk";
 
-(async () => {
-  chalk = (await import("chalk")).default;
-})();
-
-// making terminal logs pretty again
 const log = {
   error: (msg) => {
     console.error(chalk.red(`[ERROR] ${msg}`));
@@ -31,4 +26,4 @@ const log = {
   },
 };
 
-module.exports = log;
+export default log;

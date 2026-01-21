@@ -1,13 +1,13 @@
-const { App } = require("@slack/bolt");
-require("dotenv").config();
-const cron = require("node-cron");
+import { App } from "@slack/bolt";
+import "dotenv/config";
+import cron from "node-cron";
 
-const { getId, runChannelIndexing } = require("./functions/utils");
-const { getUsr } = require("./functions/user");
-const { handle, showHelp } = require("./functions/command");
-const { formatErr } = require("./functions/response");
-const { testDb, setUserOptOut } = require("./functions/db");
-const log = require("./functions/logger");
+import { getId, runChannelIndexing } from "./functions/utils.js";
+import { getUsr } from "./functions/user.js";
+import { handle, showHelp } from "./functions/command.js";
+import { formatErr } from "./functions/response.js";
+import { testDb, setUserOptOut } from "./functions/db.js";
+import log from "./functions/logger.js";
 
 const app = new App({
   token: process.env.OAUTH_TOKEN,
@@ -193,7 +193,7 @@ app.command("/scan", async ({ command, ack, respond, client }) => {
   cron.schedule("0 * * * *", async () => {
     try {
       log.info(`hourly channel gobble started ${new Date().toLocaleString()}`);
-      const { scan } = require("./scripts/scan");
+      const { scan } = await import("./scripts/scan.js");
       const result = await scan();
       if (result && result.success) {
         const successCount = result.successes || 0;

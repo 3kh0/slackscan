@@ -1,13 +1,13 @@
-const {
+import {
   formatUsr,
   formatErr,
   formatChsOnly,
   formatOut,
-} = require("./response");
-const { getCh, getUserOptOutStatus } = require("./db");
-const log = require("./logger");
+} from "./response.js";
+import { getCh, getUserOptOutStatus } from "./db.js";
+import log from "./logger.js";
 
-async function check(userId) {
+export async function check(userId) {
   try {
     const response = await fetch(`https://identity.hackclub.com/api/external/check?slack_id=${userId}`);
     const data = await response.json();
@@ -18,7 +18,7 @@ async function check(userId) {
   }
 }
 
-async function getUsr(id, client, channelsOnly = false) {
+export async function getUsr(id, client, channelsOnly = false) {
   const start = new Date();
 
   try {
@@ -45,8 +45,3 @@ async function getUsr(id, client, channelsOnly = false) {
     );
   }
 }
-
-module.exports = {
-  getUsr,
-  check,
-};

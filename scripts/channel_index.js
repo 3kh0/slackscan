@@ -1,8 +1,7 @@
-const path = require("path");
-require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
-const { WebClient } = require("@slack/web-api");
-const { addChannel, testDb } = require("../functions/db");
-const log = require("../functions/logger");
+import "dotenv/config";
+import { WebClient } from "@slack/web-api";
+import { addChannel, testDb } from "../functions/db.js";
+import log from "../functions/logger.js";
 
 const token = process.env.OAUTH_TOKEN;
 if (!token) {
@@ -139,12 +138,9 @@ async function indexChannels() {
   };
 }
 
-module.exports = {
-  indexChannels,
-  fetchChannels,
-};
+export { indexChannels, fetchChannels };
 
-if (require.main === module) {
+if (import.meta.main) {
   indexChannels()
     .then(() => {
       log.success("victory royale");

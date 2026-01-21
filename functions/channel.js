@@ -1,12 +1,12 @@
-const { updateCh, addChannel } = require("./db");
-const log = require("./logger");
+import { updateCh, addChannel } from "./db.js";
+import log from "./logger.js";
 
-function getIdFromUrl(url) {
+export function getIdFromUrl(url) {
   const match = url.match(/\/archives\/([A-Z0-9]+)/);
   return match ? match[1] : null;
 }
 
-async function scanMembers(chId, client) {
+export async function scanMembers(chId, client) {
   try {
     let name = chId;
     let pvt = false;
@@ -166,7 +166,7 @@ async function scanMembers(chId, client) {
   }
 }
 
-async function scan(urls, client) {
+export async function scan(urls, client) {
   const results = {};
 
   for (const url of urls) {
@@ -183,9 +183,3 @@ async function scan(urls, client) {
 
   return results;
 }
-
-module.exports = {
-  getIdFromUrl,
-  scanMembers,
-  scan,
-};
