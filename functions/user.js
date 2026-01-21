@@ -22,17 +22,16 @@ async function getUsr(id, client, channelsOnly = false) {
   const start = new Date();
 
   try {
-    const [res, isOptedOut, hcaStatus] = await Promise.all([
+    const [res, isOptedOut, hcaStatus, channels] = await Promise.all([
       client.users.info({ user: id }),
       getUserOptOutStatus(id),
       check(id),
+      getCh(id),
     ]);
 
     if (isOptedOut) {
       return formatOut(res.user, start, hcaStatus);
     }
-
-    const channels = await getCh(id);
 
     if (channelsOnly) {
       return formatChsOnly(res.user, channels, start, hcaStatus);
