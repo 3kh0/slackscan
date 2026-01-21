@@ -17,6 +17,7 @@ const app = new App({
 });
 
 app.message(async ({ message, client, say }) => {
+  const messageTs = parseFloat(message.ts) * 1000;
   if (message.channel_type !== "im" || message.bot_id) return;
 
   const text = message.text.trim();
@@ -77,13 +78,14 @@ app.message(async ({ message, client, say }) => {
 
   if (!targetUserId) return;
 
-  const response = await getUsr(targetUserId, client, showChannelsOnly);
+  const response = await getUsr(targetUserId, client, showChannelsOnly, messageTs);
   await say(response);
 });
 
 // #what-is-my-slack-id
 app.message(async ({ message, client }) => {
   if (message.channel !== "C0159TSJVH8" || message.bot_id || message.thread_ts) return;
+  const messageTs = parseFloat(message.ts) * 1000;
 
   try {
     const text = message.text?.trim();
@@ -130,10 +132,10 @@ app.message(async ({ message, client }) => {
       let response;
       const targetId = x || message.user;
       if (x) {
-        response = await getUsr(x, client);
+        response = await getUsr(x, client, false, messageTs);
       }
       if (!response?.blocks) {
-        response = await getUsr(message.user, client);
+        response = await getUsr(message.user, client, false, messageTs);
       }
       if (response?.blocks) {
         await client.chat.postMessage({
@@ -154,9 +156,10 @@ app.message(async ({ message, client }) => {
 });
 
 app.command("/scan", async ({ command, ack, respond, client }) => {
+  const startTs = Date.now();
   await ack();
   try {
-    const response = await handle(command, client);
+    const response = await handle(command, client, startTs);
     await respond(response);
   } catch (error) {
     log.error(`Error: ${error.message}`);

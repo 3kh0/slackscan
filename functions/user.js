@@ -18,8 +18,8 @@ export async function check(userId) {
   }
 }
 
-export async function getUsr(id, client, channelsOnly = false) {
-  const start = new Date();
+export async function getUsr(id, client, channelsOnly = false, messageTs = null) {
+  const start = messageTs || Date.now();
 
   try {
     const [res, isOptedOut, hcaStatus, channels] = await Promise.all([

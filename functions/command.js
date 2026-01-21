@@ -70,7 +70,7 @@ function showHelp() {
   };
 }
 
-export async function handle(cmd, client) {
+export async function handle(cmd, client, startTs = null) {
   const txt = cmd.text.trim();
   const userId = cmd.user_id;
 
@@ -136,7 +136,7 @@ export async function handle(cmd, client) {
     return formatErr("Invalid user ID or mention. Try `/scan -h` for help.");
   }
 
-  return await getUsr(targetUserId, client, showChannelsOnly);
+  return await getUsr(targetUserId, client, showChannelsOnly, startTs);
 }
 
 export { showHelp };

@@ -7,7 +7,7 @@ function silent(user) {
 
 export function formatUsr(user, channels = [], start = null, hcaStatus = null) {
   try {
-    const executionStart = start || new Date();
+    const executionStart = start || Date.now();
     const blocks = [
       {
         type: "header",
@@ -119,7 +119,7 @@ export function formatUsr(user, channels = [], start = null, hcaStatus = null) {
         elements: [
           {
             type: "mrkdwn",
-            text: `${new Date() - executionStart}ms - You can use me via DMs and /scan!`,
+            text: `${Date.now() - executionStart}ms - You can use me via DMs and /scan!`,
           },
         ],
       }
@@ -145,7 +145,7 @@ export function formatErr(msg = "An unknown error occurred") {
 
 export function formatChsOnly(user, channels = [], start = null, hcaStatus = null) {
   try {
-    const executionStart = start || new Date();
+    const executionStart = start || Date.now();
     const blocks = [
       {
         type: "section",
@@ -239,7 +239,7 @@ export function formatChsOnly(user, channels = [], start = null, hcaStatus = nul
         elements: [
           {
             type: "mrkdwn",
-            text: `Executed in ${new Date() - executionStart}ms`,
+            text: `Executed in ${Date.now() - executionStart}ms`,
           },
         ],
       }
@@ -259,7 +259,7 @@ export function formatChsOnly(user, channels = [], start = null, hcaStatus = nul
 
 export function formatOut(user, start = null, hcaStatus = null) {
   try {
-    const executionStart = start || new Date();
+    const executionStart = start || Date.now();
     const blocks = [
       {
         type: "header",
@@ -304,7 +304,7 @@ export function formatOut(user, start = null, hcaStatus = null) {
         elements: [
           {
             type: "mrkdwn",
-            text: `Executed in ${new Date() - executionStart}ms`,
+            text: `Executed in ${Date.now() - executionStart}ms`,
           },
         ],
       },
