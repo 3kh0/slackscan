@@ -158,14 +158,11 @@ app.message(async ({ message, client }) => {
         text: `<#${cid}>`,
       });
     } else {
-      let response;
+
       const targetId = x || message.user;
-      if (x) {
-        response = await getUsr(x, client, false, messageTs);
-      }
-      if (!response?.blocks) {
-        response = await getUsr(message.user, client, false, messageTs);
-      }
+      log.debug(`[${reqId}] resolved targetId=${targetId} (explicit: ${!!x})`);
+
+      const response = await getUsr(targetId, client, false, messageTs);
       if (response?.blocks) {
         log.debug(`[${reqId}] sending user lookup reply for targetId=${targetId}`);
         await client.chat.postMessage({
