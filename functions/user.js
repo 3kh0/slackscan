@@ -35,7 +35,8 @@ export async function check(userId) {
 }
 
 export async function getUsr(id, client, channelsOnly = false, messageTs = null) {
-  const start = messageTs || Date.now();
+  const receiveTime = Date.now();
+  const slackDelay = messageTs ? receiveTime - messageTs : null;
   log.info(`lookup start user=${id} channelsOnly=${channelsOnly}`);
 
   try {
@@ -49,16 +50,16 @@ export async function getUsr(id, client, channelsOnly = false, messageTs = null)
     log.debug(`lookup data user=${id} channels=${channels?.length ?? 0} optedOut=${optedOut}`);
 
     if (optedOut) {
-      log.info(`lookup done user=${id} (opted out) ${Date.now() - start}ms`);
-      return formatOut(res.user, start, hcaStatus);
+      log.info(`lookup done user=${id} (opted out) slack=${slackDelay ?? "?"}ms process=${Date.now() - receiveTime}ms`);
+      return formatOut(res.user, receiveTime, slackDelay, hcaStatus);
     }
 
     if (channelsOnly) {
-      log.info(`lookup done user=${id} (channelsOnly) ${Date.now() - start}ms`);
-      return formatChsOnly(res.user, channels, start, hcaStatus);
+      log.info(`lookup done user=${id} (channelsOnly) slack=${slackDelay ?? "?"}ms process=${Date.now() - receiveTime}ms`);
+      return formatChsOnly(res.user, channels, receiveTime, slackDelay, hcaStatus);
     } else {
-      log.info(`lookup done user=${id} ${Date.now() - start}ms`);
-      return formatUsr(res.user, channels, start, hcaStatus);
+      log.info(`lookup done user=${id} slack=${slackDelay ?? "?"}ms process=${Date.now() - receiveTime}ms`);
+      return formatUsr(res.user, channels, receiveTime, slackDelay, hcaStatus);
     }
   } catch (err) {
     log.error(`fail on return ${err.message}\n${err.stack}`);

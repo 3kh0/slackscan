@@ -32,9 +32,9 @@ function d(user) {
   return `${dateStr} (${years} year${years > 1 ? "s" : ""} ago)`;
 }
 
-export function formatUsr(user, channels = [], start = null, hcaStatus = null) {
+export function formatUsr(user, channels = [], receiveTime = null, slackDelay = null, hcaStatus = null) {
   try {
-    const executionStart = start || Date.now();
+    const executionStart = receiveTime || Date.now();
     const startDate = d(user);
     const blocks = [
       {
@@ -147,7 +147,7 @@ export function formatUsr(user, channels = [], start = null, hcaStatus = null) {
         elements: [
           {
             type: "mrkdwn",
-            text: `${Math.round(Date.now() - executionStart)}ms - You can use me via DMs and /scan!`,
+            text: `${slackDelay != null ? `slack: ${Math.round(slackDelay)}ms | ` : ""}process: ${Math.round(Date.now() - executionStart)}ms - You can use me via DMs and /scan!`,
           },
         ],
       }
@@ -171,9 +171,9 @@ export function formatErr(msg = "An unknown error occurred") {
   };
 }
 
-export function formatChsOnly(user, channels = [], start = null, hcaStatus = null) {
+export function formatChsOnly(user, channels = [], receiveTime = null, slackDelay = null, hcaStatus = null) {
   try {
-    const executionStart = start || Date.now();
+    const executionStart = receiveTime || Date.now();
     const startDate = d(user);
     const blocks = [
       {
@@ -268,7 +268,7 @@ export function formatChsOnly(user, channels = [], start = null, hcaStatus = nul
         elements: [
           {
             type: "mrkdwn",
-            text: `Executed in ${Math.round(Date.now() - executionStart)}ms`,
+            text: `${slackDelay != null ? `slack: ${Math.round(slackDelay)}ms | ` : ""}process: ${Math.round(Date.now() - executionStart)}ms`,
           },
         ],
       }
@@ -286,9 +286,9 @@ export function formatChsOnly(user, channels = [], start = null, hcaStatus = nul
   }
 }
 
-export function formatOut(user, start = null, hcaStatus = null) {
+export function formatOut(user, receiveTime = null, slackDelay = null, hcaStatus = null) {
   try {
-    const executionStart = start || Date.now();
+    const executionStart = receiveTime || Date.now();
     const startDate = d(user);
     const blocks = [
       {
@@ -334,7 +334,7 @@ export function formatOut(user, start = null, hcaStatus = null) {
         elements: [
           {
             type: "mrkdwn",
-            text: `Executed in ${Math.round(Date.now() - executionStart)}ms`,
+            text: `${slackDelay != null ? `slack: ${Math.round(slackDelay)}ms | ` : ""}process: ${Math.round(Date.now() - executionStart)}ms`,
           },
         ],
       },

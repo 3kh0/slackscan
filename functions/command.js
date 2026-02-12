@@ -145,7 +145,7 @@ export async function handle(cmd, client, startTs = null) {
     return formatErr("Invalid user ID or mention. Try `/scan -h` for help.");
   }
 
-  return await getUsr(targetUserId, client, showChannelsOnly, startTs);
+  return await getUsr(targetUserId, client, showChannelsOnly, null);
 }
 
 export { showHelp };
