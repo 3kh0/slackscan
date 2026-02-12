@@ -213,12 +213,12 @@ process.on("uncaughtException", (error) => {
     process.exit(1);
   }
 
-  await app.start();
-  log.success("we are so back, and on port 3000");
-
   app.receiver.app.get("/health", (_req, res) => {
     res.status(200).json({ status: "ok", uptime: process.uptime() });
   });
+
+  await app.start();
+  log.success("we are so back, and on port 3000");
 
   cron.schedule("0 */6 * * *", async () => {
     try {
