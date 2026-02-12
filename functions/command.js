@@ -73,6 +73,7 @@ function showHelp() {
 export async function handle(cmd, client, startTs = null) {
   const txt = cmd.text.trim();
   const userId = cmd.user_id;
+  log.debug(`handle cmd text="${txt}" userId=${userId}`);
 
   if (txt === "-h" || txt === "--help" || txt === "help") {
     return showHelp();
@@ -81,11 +82,13 @@ export async function handle(cmd, client, startTs = null) {
   if (txt === "optout") {
     const success = await setUserOptOut(userId, true);
     if (success) {
+      log.info(`optout success for ${userId}`);
       return {
         text: "✅ Done you party pooper",
         response_type: "ephemeral",
       };
     } else {
+      log.info(`optout failed for ${userId}`);
       return formatErr(
         ":red-x: Ruh ro, something broke, give it another go?"
       );
@@ -95,11 +98,13 @@ export async function handle(cmd, client, startTs = null) {
   if (txt === "optin") {
     const success = await setUserOptOut(userId, false);
     if (success) {
+      log.info(`optin success for ${userId}`);
       return {
         text: "✅ Done welcome back",
         response_type: "ephemeral",
       };
     } else {
+      log.info(`optin failed for ${userId}`);
       return formatErr(
         ":red-x: Ruh ro, something broke, give it another go?"
       );
@@ -124,7 +129,10 @@ export async function handle(cmd, client, startTs = null) {
 
     if (!targetUserId) {
       targetUserId = getId(part);
-      if (targetUserId) continue;
+      if (targetUserId) {
+        log.debug(`resolved target userId=${targetUserId} from "${part}"`);
+        continue;
+      }
     }
 
     if (!part.startsWith("-")) {
@@ -133,6 +141,7 @@ export async function handle(cmd, client, startTs = null) {
   }
 
   if (!targetUserId) {
+    log.warn(`no target user ID parsed from "${txt}"`);
     return formatErr("Invalid user ID or mention. Try `/scan -h` for help.");
   }
 

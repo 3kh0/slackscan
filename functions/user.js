@@ -10,6 +10,8 @@ import log from "./logger.js";
 export async function check(userId) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 1000);
+  log.debug(`starting hca check for ${userId}`);
+  const hcaStart = Date.now();
   
   try {
     const response = await fetch(
@@ -18,7 +20,9 @@ export async function check(userId) {
     );
     clearTimeout(timeout);
     const data = await response.json();
-    return data.result || "unknown";
+    const status = data.result || "unknown";
+    log.debug(`hca check for ${userId}: status=${status} (${Date.now() - hcaStart}ms)`);
+    return status;
   } catch (err) {
     clearTimeout(timeout);
     if (err.name === 'AbortError') {
@@ -32,6 +36,7 @@ export async function check(userId) {
 
 export async function getUsr(id, client, channelsOnly = false, messageTs = null) {
   const start = messageTs || Date.now();
+  log.info(`lookup start user=${id} channelsOnly=${channelsOnly}`);
 
   try {
     const [res, userData, hcaStatus] = await Promise.all([
@@ -41,18 +46,22 @@ export async function getUsr(id, client, channelsOnly = false, messageTs = null)
     ]);
 
     const { channels, optedOut } = userData;
+    log.debug(`lookup data user=${id} channels=${channels?.length ?? 0} optedOut=${optedOut}`);
 
     if (optedOut) {
+      log.info(`lookup done user=${id} (opted out) ${Date.now() - start}ms`);
       return formatOut(res.user, start, hcaStatus);
     }
 
     if (channelsOnly) {
+      log.info(`lookup done user=${id} (channelsOnly) ${Date.now() - start}ms`);
       return formatChsOnly(res.user, channels, start, hcaStatus);
     } else {
+      log.info(`lookup done user=${id} ${Date.now() - start}ms`);
       return formatUsr(res.user, channels, start, hcaStatus);
     }
   } catch (err) {
-    log.error(`fail on return ${err.message}`);
+    log.error(`fail on return ${err.message}\n${err.stack}`);
     return formatErr(
       "Sorry, I couldn't find that user. Check the ID or mention."
     );
