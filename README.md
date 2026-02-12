@@ -25,10 +25,10 @@ Using SlackScan is easy as DMing the bot a user mention (if you are in the Hack 
 Want to stalk people on your own Slack workspace? Here's how to set it up:
 
 1. Clone the code and install packages with `pnpm i`.
-2. Get a Slack app with these scopes: `channels:read`, `chat:write`, `commands`, `users:read`, `groups:read`. Make sure it is in Socket Mode.
+2. Get a Slack app with these scopes: `channels:read`, `chat:write`, `commands`, `users:read`, `groups:read`. Enable Event Subscriptions and set the Request URL to `https://your-domain.com/slack/events`. Subscribe to `message.im` and `message.channels` bot events. For the `/scan` slash command, set the Request URL to `https://your-domain.com/slack/events`.
 3. Set up a Postgres database (see the init.sql file for schema)
 4. Create a `.env` file by copying `.env.example` and filling it in
-5. SlackScan also supports a slash command, which you can register `/scan` in your Slack settings. Make sure to tick the "Escape channels, users, and links sent to your app" option and set the usage hint as "[user mention|user id]". Turn on socket mode so you do not need to set up a public URL.
+5. SlackScan also supports a slash command, which you can register `/scan` in your Slack settings. Make sure to tick the "Escape channels, users, and links sent to your app" option and set the usage hint as "[user mention|user id]".
 6. Run the app with `pnpm start` and the channel indexing script with `pnpm run index`.
 7. Profit???
 
