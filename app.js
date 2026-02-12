@@ -13,6 +13,16 @@ const app = new App({
   token: process.env.OAUTH_TOKEN,
   signingSecret: process.env.SIGNING_SECRET,
   port: 3000,
+  customRoutes: [
+    {
+      path: "/health",
+      method: "GET",
+      handler: (_req, res) => {
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ status: "ok", uptime: process.uptime() }));
+      },
+    },
+  ],
 });
 
 app.message(async ({ message, client, say }) => {
@@ -212,10 +222,6 @@ process.on("uncaughtException", (error) => {
     log.error("dude where's my database");
     process.exit(1);
   }
-
-  app.receiver.app.get("/health", (_req, res) => {
-    res.status(200).json({ status: "ok", uptime: process.uptime() });
-  });
 
   await app.start();
   log.success("we are so back, and on port 3000");
