@@ -104,7 +104,7 @@ app.message(async ({ message, client, say }) => {
 
 // #what-is-my-slack-id
 app.message(async ({ message, client }) => {
-  if (message.channel !== "C0159TSJVH8" || message.bot_id || message.thread_ts) return;
+  if (message.channel !== "C0159TSJVH8" || message.bot_id || message.subtype || message.thread_ts || !message.user) return;
   const reqId = log.reqId();
   const startTime = Date.now();
   const messageTs = parseFloat(message.ts) * 1000;
