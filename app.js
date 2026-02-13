@@ -163,20 +163,18 @@ app.message(async ({ message, client }) => {
       log.debug(`[${reqId}] resolved targetId=${targetId} (explicit: ${!!x})`);
 
       const response = await getUsr(targetId, client, false, messageTs);
-      if (response?.blocks) {
-        log.debug(`[${reqId}] sending user lookup reply for targetId=${targetId}`);
-        await client.chat.postMessage({
-          channel: message.channel,
-          thread_ts: message.ts,
-          text: targetId,
-        });
-        log.debug(`[${reqId}] sending user details reply for targetId=${targetId}`);
-        await client.chat.postMessage({
-          channel: message.channel,
-          thread_ts: message.ts,
-          ...response,
-        });
-      }
+      log.debug(`[${reqId}] sending user lookup reply for targetId=${targetId}`);
+      await client.chat.postMessage({
+        channel: message.channel,
+        thread_ts: message.ts,
+        text: targetId,
+      });
+      log.debug(`[${reqId}] sending user details reply for targetId=${targetId}`);
+      await client.chat.postMessage({
+        channel: message.channel,
+        thread_ts: message.ts,
+        ...response,
+      });
     }
   } catch (error) {
     log.error(`[${reqId}] Error replying with Slack ID: ${error.message}`);
