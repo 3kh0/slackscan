@@ -40,8 +40,12 @@ export async function getUsr(id, client, channelsOnly = false, messageTs = null)
   log.info(`lookup start user=${id} channelsOnly=${channelsOnly}`);
 
   try {
+    const timeout = (ms, label) => new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)
+    );
+
     const [res, userData, hcaStatus] = await Promise.all([
-      client.users.info({ user: id }),
+      Promise.race([client.users.info({ user: id }), timeout(10000, "users.info")]),
       getUserData(id),
       check(id),
     ]);
@@ -63,6 +67,11 @@ export async function getUsr(id, client, channelsOnly = false, messageTs = null)
     }
   } catch (err) {
     log.error(`fail on return ${err.message}\n${err.stack}`);
+    if (err.message.includes("timed out")) {
+      return formatErr(
+        ":hourglass: Slack API is busy right now (likely rate limited). Try again in a minute!"
+      );
+    }
     return formatErr(
       "Sorry, I couldn't find that user. Check the ID or mention."
     );
