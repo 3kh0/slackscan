@@ -162,13 +162,14 @@ app.message(async ({ message, client }) => {
       const targetId = x || message.user;
       log.debug(`[${reqId}] resolved targetId=${targetId} (explicit: ${!!x})`);
 
-      const response = await getUsr(targetId, client, false, messageTs);
-      log.debug(`[${reqId}] sending user lookup reply for targetId=${targetId}`);
+      log.debug(`[${reqId}] sending user id reply for targetId=${targetId}`);
       await client.chat.postMessage({
         channel: message.channel,
         thread_ts: message.ts,
         text: targetId,
       });
+
+      const response = await getUsr(targetId, client, false, messageTs);
       log.debug(`[${reqId}] sending user details reply for targetId=${targetId}`);
       await client.chat.postMessage({
         channel: message.channel,
