@@ -16,6 +16,7 @@ import log from "../functions/logger.js";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const BATCH_SIZE = 100;
+let scanning = false;
 
 async function scanBatch(client) {
   const toScan = await listOldest(BATCH_SIZE);
@@ -34,6 +35,7 @@ async function scanBatch(client) {
 
   for (const ch of toScan) {
     done++;
+    if (done > 1) await sleep(2000);
     try {
       const result = await scanMembers(ch.channel_id, client);
       if (result.success) {
@@ -153,6 +155,20 @@ async function scanBatch(client) {
 }
 
 async function scan() {
+  if (scanning) {
+    log.warn("scan already in progress, skipping this run");
+    return { success: true, skipped: true, reason: "already_running" };
+  }
+
+  scanning = true;
+  try {
+    return await _scan();
+  } finally {
+    scanning = false;
+  }
+}
+
+async function _scan() {
   const check = await testDb();
   if (!check) {
     log.error("Can't connect to DB, is it running?");

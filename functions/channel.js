@@ -90,6 +90,7 @@ export async function scanMembers(chId, client) {
           log.info(
             `Found ${members.length} members so far in ${name}, getting next page`
           );
+          await new Promise((r) => setTimeout(r, 1000));
         }
       } catch (err) {
         if (err.message.includes("channel_not_found")) {
