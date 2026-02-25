@@ -1,4 +1,4 @@
-import { App } from "@slack/bolt";
+import { App, LogLevel } from "@slack/bolt";
 import "dotenv/config";
 
 import { getId } from "./functions/utils.js";
@@ -11,6 +11,7 @@ import log from "./functions/logger.js";
 const app = new App({
   token: process.env.OAUTH_TOKEN,
   signingSecret: process.env.SIGNING_SECRET,
+  logLevel: LogLevel.DEBUG,
   port: 3000,
   customRoutes: [
     {
