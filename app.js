@@ -1,8 +1,7 @@
 import { App } from "@slack/bolt";
 import "dotenv/config";
-import cron from "node-cron";
 
-import { getId, runChannelIndexing } from "./functions/utils.js";
+import { getId } from "./functions/utils.js";
 import { getUsr } from "./functions/user.js";
 import { handle, showHelp } from "./functions/command.js";
 import { formatErr } from "./functions/response.js";
@@ -221,43 +220,4 @@ process.on("uncaughtException", (error) => {
 
   await app.start();
   log.success("we are so back, and on port 3000");
-
-  cron.schedule("0 */6 * * *", async () => {
-    try {
-      log.info(
-        `channel gobble started at ${new Date().toLocaleString()}`
-      );
-      const result = await runChannelIndexing();
-      if (result.success) {
-        log.success(`channel gobble completed: ${result.message}`);
-      } else {
-        log.error(`channel gobble failed: ${result.message}`);
-      }
-    } catch (error) {
-      log.error(`error during channel gobble: ${error.message}`);
-    }
-  });
-
-  cron.schedule("0 * * * *", async () => {
-    try {
-      log.info(`hourly channel gobble started ${new Date().toLocaleString()}`);
-      const { scan } = await import("./scripts/scan.js");
-      const result = await scan();
-      if (result && result.success) {
-        const successCount = result.successes || 0;
-        const totalCount = result.channelsScanned || 0;
-        const skippedCount = result.skipped || 0;
-
-        let message = `channel gobble done, scanned ${successCount} channels out of ${totalCount} that needed update`;
-        if (skippedCount > 0) {
-          message += ` (${skippedCount} skipped)`;
-        }
-        log.success(message);
-      } else {
-        log.error("channel gobble failed");
-      }
-    } catch (error) {
-      log.error(`error during hourly channel gobble: ${error.message}`);
-    }
-  });
 })();

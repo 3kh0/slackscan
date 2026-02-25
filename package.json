@@ -7,6 +7,8 @@
   "scripts": {
     "start": "bun run app.js",
     "dev": "bun --watch app.js",
+    "indexer": "bun run indexer.js",
+    "dev:indexer": "bun --watch indexer.js",
     "scan": "bun run scripts/scan.js",
     "index": "bun run scripts/channel_index.js"
   },
