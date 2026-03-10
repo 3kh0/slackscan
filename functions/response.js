@@ -57,7 +57,7 @@ export function formatUsr(user, channels = [], receiveTime = null, slackDelay = 
             user.profile.display_name || "Not set"
           }\n*Real Name:* ${user.real_name || "Not set"}\n*Username:* ${
             user.name
-          }${startDate ? `\n*Joined:* ${startDate}` : ""}${hcaStatus && hcaStatus !== "unknown" ? `\n*HCA Status:* ${hcaStatus}` : ""}`,
+          }\n*Email:* ${user.profile.email || "Not available"}${startDate ? `\n*Joined:* ${startDate}` : ""}${hcaStatus && hcaStatus !== "unknown" ? `\n*HCA Status:* ${hcaStatus}` : ""}`,
         },
         accessory: {
           type: "image",
@@ -311,7 +311,7 @@ export function formatOut(user, receiveTime = null, slackDelay = null, hcaStatus
             user.profile.display_name || "Not set"
           }\n*Real Name:* ${user.real_name || "Not set"}\n*Username:* ${
             user.name
-          }${startDate ? `\n*Joined:* ${startDate}` : ""}${hcaStatus && hcaStatus !== "unknown" ? `\n*HCA Status:* ${hcaStatus}` : ""}`,
+          }\n*Email:* ${user.profile.email || "Not available"}${startDate ? `\n*Joined:* ${startDate}` : ""}${hcaStatus && hcaStatus !== "unknown" ? `\n*HCA Status:* ${hcaStatus}` : ""}`,
         },
         accessory: {
           type: "image",
