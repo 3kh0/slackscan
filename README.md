@@ -32,6 +32,17 @@ Want to stalk people on your own Slack workspace? Here's how to set it up:
 6. Run the app with `pnpm start` and the channel indexing script with `pnpm run index`.
 7. Profit???
 
+## API
+
+There's also a public API so other apps can dig out channel data. No auth, but it's rate limited per IP (defaults 60/min).
+
+| Method & path | What you get |
+| --- | --- |
+| `GET /health` | liveness check |
+| `GET /channels` | all indexed channels |
+| `GET /users/:uid/channels` | channels a user is in (empty if they opted out) |
+| `GET /stats` | counts: channels, private channels, users, opted-out, last scan time |
+
 ## Legal mumbo jumbo
 
 Don't use this to be weird, okay? Just don't be a dic,k and if you get in trouble, fuck around and find out. Don't sue me.

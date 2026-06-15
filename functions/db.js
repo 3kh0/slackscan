@@ -252,6 +252,37 @@ export async function listOldest(limit = 100) {
   }
 }
 
+export async function getStats() {
+  try {
+    return await db.one(
+      `
+      SELECT
+        (SELECT COUNT(*) FROM channels) AS channels,
+        (SELECT COUNT(*) FROM channels WHERE is_private) AS private_channels,
+        (SELECT COUNT(*) FROM users) AS users,
+        (SELECT COUNT(*) FROM users WHERE opted_out) AS opted_out,
+        (SELECT MAX(last_scanned) FROM channels) AS last_scanned
+    `
+    );
+  } catch (e) {
+    log.error(`fail getting stats: ${e.message}`);
+    return null;
+  }
+}
+
+export async function getChannelsByIds(ids) {
+  try {
+    if (!Array.isArray(ids) || ids.length === 0) return [];
+    return await db.manyOrNone(
+      "SELECT channel_id, channel_name, is_private FROM channels WHERE channel_id IN ($1:csv)",
+      [ids]
+    );
+  } catch (e) {
+    log.error(`fail getting channels by ids: ${e.message}`);
+    return [];
+  }
+}
+
 export async function setUserOptOut(uid, optedOut = true) {
   try {
     const u = await db.oneOrNone("SELECT * FROM users WHERE slack_uid = $1", [
