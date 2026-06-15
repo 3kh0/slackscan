@@ -5,8 +5,9 @@ CREATE TABLE IF NOT EXISTS users (
   opted_out BOOLEAN DEFAULT FALSE
 );
 
-CREATE INDEX IF NOT EXISTS idx_users_channels ON users USING GIN (channels);
-CREATE INDEX IF NOT EXISTS idx_users_slack_uid ON users (slack_uid);
+DROP INDEX IF EXISTS idx_users_channels;
+DROP INDEX IF EXISTS idx_users_slack_uid;
+
 CREATE INDEX IF NOT EXISTS idx_users_opted_out ON users (opted_out);
 
 CREATE TABLE IF NOT EXISTS channels (

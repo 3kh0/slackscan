@@ -45,7 +45,9 @@ export async function addCh(uid, chId) {
       }
 
       const chMap = new Map(existingChannels);
-      chMap.set(chId, ts);
+      if (!chMap.has(chId)) {
+        chMap.set(chId, ts);
+      }
       const updCh = Array.from(chMap.entries());
 
       if (
@@ -62,7 +64,7 @@ export async function addCh(uid, chId) {
       }
 
       await db.none(
-        "UPDATE users SET channels = $1::jsonb WHERE slack_uid = $2",
+        "UPDATE users SET channels = $1::jsonb WHERE slack_uid = $2 AND channels IS DISTINCT FROM $1::jsonb",
         [JSON.stringify(updCh), uid]
       );
     } else {
@@ -131,12 +133,10 @@ export async function getChRespectingPrivacy(uid) {
 
 export async function updateCh(chId, memberIds) {
   try {
-    return await db.tx(async (t) => {
-      const promises = memberIds.map((uid) => addCh(uid, chId));
-      await markScanned(chId);
-      await markUpdated(chId);
-      return t.batch(promises);
-    });
+    await Promise.all(memberIds.map((uid) => addCh(uid, chId)));
+    await markScanned(chId);
+    await markUpdated(chId);
+    return true;
   } catch (e) {
     log.error(`Error updating members for channel ${chId}: ${e.message}`);
     return false;
