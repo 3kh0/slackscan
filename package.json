@@ -24,6 +24,6 @@
     "node-cron": "^4.5.0",
     "pg": "^8.22.0",
     "pg-promise": "^12.6.2",
-    "pg-query-stream": "^4.15.0"
+    "pg-query-stream": "^4.16.0"
   }
 }
