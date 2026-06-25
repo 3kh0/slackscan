@@ -12,7 +12,7 @@
         "node-cron": "^4.5.0",
         "pg": "^8.22.0",
         "pg-promise": "^12.6.2",
-        "pg-query-stream": "^4.15.0",
+        "pg-query-stream": "^4.16.0",
       },
     },
   },
@@ -221,7 +221,7 @@
 
     "pg-connection-string": ["pg-connection-string@2.14.0", "", {}, "sha512-XwWDGcLRGCXAR8F/AM5bG7Q+A3Wm2s6QeEjlOKZLlH3UYcguiqCWKyWXVag5TLTIjR7oOJUY8kcADaZgWPyLeg=="],
 
-    "pg-cursor": ["pg-cursor@2.20.0", "", { "peerDependencies": { "pg": "^8" } }, "sha512-HP/EbUafheaUOs7DxlG6tda/rhmsX2hCTJJJ+gCnhljGyNEs6pBHddbNuomlW3DqEhP3zYD+GqBWkYnJPIZ4tA=="],
+    "pg-cursor": ["pg-cursor@2.21.0", "", { "peerDependencies": { "pg": "^8" } }, "sha512-IYvk/j+Suhtbo/C3uOf4JLsLK/gWxOTUOmYbDsbKnLaVJDq+KwhwK6ngpRfiCk8eDMS3AmGQABZCv0cREEzHQw=="],
 
     "pg-int8": ["pg-int8@1.0.1", "", {}, "sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw=="],
 
@@ -233,7 +233,7 @@
 
     "pg-protocol": ["pg-protocol@1.15.0", "", {}, "sha512-cq9sECI5s0+uPUXjbz8ioyPJni6RzsRib0US67i5IoTZKw8fNeYlVE7u8F4dG7vEJJtc5wdD1K189lCCUwqWTQ=="],
 
-    "pg-query-stream": ["pg-query-stream@4.15.0", "", { "dependencies": { "pg-cursor": "^2.20.0" }, "peerDependencies": { "pg": "^8" } }, "sha512-hyCs0PaOyCWqC90N9vyHL2wVNyR3OjnqFrLvgX74Pyh0JihTKUywpPyhKnuVp9TCCcGz7Fc9LdtxoBU+3nv10A=="],
+    "pg-query-stream": ["pg-query-stream@4.16.0", "", { "dependencies": { "pg-cursor": "^2.21.0" }, "peerDependencies": { "pg": "^8" } }, "sha512-vyqxAG4YVax43BCSfqcKxHSbh8YQshhVR0CjLNdo7MIM2UOqI+XsIYk0bVZJ0aKjQfjJQcGiGo9xK3hz0JcFyg=="],
 
     "pg-types": ["pg-types@2.2.0", "", { "dependencies": { "pg-int8": "1.0.1", "postgres-array": "~2.0.0", "postgres-bytea": "~1.0.0", "postgres-date": "~1.0.4", "postgres-interval": "^1.1.0" } }, "sha512-qTAAlrEsl8s4OiEQY69wDvcMIdQN6wdz5ojQiOy6YRMuynxenON0O5oCpJI6lshc6scgAY8qvJ2On/p+CXY0GA=="],
 
