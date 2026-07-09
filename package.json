@@ -23,7 +23,7 @@
     "dotenv": "^17.4.2",
     "node-cron": "^4.6.0",
     "pg": "^8.22.0",
-    "pg-promise": "^12.6.2",
+    "pg-promise": "^12.7.0",
     "pg-query-stream": "^4.16.0"
   }
 }
