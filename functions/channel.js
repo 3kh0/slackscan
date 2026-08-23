@@ -6,33 +6,36 @@ export function getIdFromUrl(url) {
   return match ? match[1] : null;
 }
 
-export async function scanMembers(chId, client) {
+export async function scanMembers(chId, client, chName = null) {
   try {
-    let name = chId;
-    let pvt = false;
+    // channel_index.js already refreshes name/privacy for every channel every 6h,
+    // so callers that know the name skip conversations.info (tier 3) entirely.
+    // deleted channels still surface as channel_not_found on the members call below
+    let name = chName || chId;
 
-    try {
-      const info = await client.conversations.info({
-        channel: chId,
-      });
+    if (!chName) {
+      try {
+        const info = await client.conversations.info({
+          channel: chId,
+        });
 
-      if (info.ok && info.channel) {
-        name = info.channel.name;
-        pvt = info.channel.is_private || false;
-        await addChannel(chId, name, pvt);
+        if (info.ok && info.channel) {
+          name = info.channel.name;
+          await addChannel(chId, name, info.channel.is_private || false);
+        }
+      } catch (err) {
+        if (err.message.includes("channel_not_found")) {
+          log.warn(
+            `Channel ${chId} not found (possibly deleted or archived), skipping...`
+          );
+          return {
+            success: false,
+            error: "channel_not_found",
+            skippable: true,
+          };
+        }
+        log.warn(`Could not get channel info for ${chId}: ${err.message}`);
       }
-    } catch (err) {
-      if (err.message.includes("channel_not_found")) {
-        log.warn(
-          `Channel ${chId} not found (possibly deleted or archived), skipping...`
-        );
-        return {
-          success: false,
-          error: "channel_not_found",
-          skippable: true,
-        };
-      }
-      log.warn(`Could not get channel info for ${chId}: ${err.message}`);
     }
 
     let members = [];

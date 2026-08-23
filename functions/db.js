@@ -23,64 +23,6 @@ export function getTime() {
   return Math.floor(Date.now() / 1000);
 }
 
-export async function addCh(uid, chId) {
-  try {
-    const ts = getTime();
-    const u = await db.oneOrNone("SELECT * FROM users WHERE slack_uid = $1", [
-      uid,
-    ]);
-
-    if (u) {
-      let existingChannels = [];
-      try {
-        if (Array.isArray(u.channels)) {
-          existingChannels = u.channels.filter(
-            (ch) =>
-              Array.isArray(ch) && ch.length === 2 && typeof ch[0] === "string"
-          );
-        }
-      } catch (parseErr) {
-        log.warn(`Invalid channel data for user ${uid}, resetting channels`);
-        existingChannels = [];
-      }
-
-      const chMap = new Map(existingChannels);
-      if (!chMap.has(chId)) {
-        chMap.set(chId, ts);
-      }
-      const updCh = Array.from(chMap.entries());
-
-      if (
-        !Array.isArray(updCh) ||
-        !updCh.every(
-          (ch) =>
-            Array.isArray(ch) &&
-            ch.length === 2 &&
-            typeof ch[0] === "string" &&
-            typeof ch[1] === "number"
-        )
-      ) {
-        throw new Error("dude ur data is all fucked up");
-      }
-
-      await db.none(
-        "UPDATE users SET channels = $1::jsonb WHERE slack_uid = $2 AND channels IS DISTINCT FROM $1::jsonb",
-        [JSON.stringify(updCh), uid]
-      );
-    } else {
-      const chs = [[chId, ts]];
-      await db.none(
-        "INSERT INTO users (slack_uid, channels) VALUES ($1, $2::jsonb)",
-        [uid, JSON.stringify(chs)]
-      );
-    }
-    return true;
-  } catch (e) {
-    log.error(`cant add ${uid} to channel ${chId}: ${e.message}`);
-    return false;
-  }
-}
-
 export async function getCh(uid) {
   try {
     const u = await db.oneOrNone(
@@ -133,7 +75,27 @@ export async function getChRespectingPrivacy(uid) {
 
 export async function updateCh(chId, memberIds) {
   try {
-    await Promise.all(memberIds.map((uid) => addCh(uid, chId)));
+    const ts = getTime();
+    const uids = [...new Set(memberIds)];
+
+    if (uids.length > 0) {
+      // one round trip for the whole chunk, only appends to users that don't
+      // already have this channel so re-scans stay no-ops
+      await db.none(
+        `
+        INSERT INTO users (slack_uid, channels)
+        SELECT DISTINCT u, jsonb_build_array(jsonb_build_array(to_jsonb($2::text), to_jsonb($3::bigint)))
+        FROM unnest($1::text[]) AS u
+        ON CONFLICT (slack_uid) DO UPDATE
+        SET channels = users.channels || jsonb_build_array(jsonb_build_array(to_jsonb($2::text), to_jsonb($3::bigint)))
+        WHERE NOT EXISTS (
+          SELECT 1 FROM jsonb_array_elements(users.channels) e WHERE e->>0 = $2
+        )
+      `,
+        [uids, chId, ts]
+      );
+    }
+
     await markScanned(chId);
     return true;
   } catch (e) {
@@ -195,6 +157,33 @@ export async function markChannelDeleted(chId) {
   } catch (e) {
     log.error(`Error marking channel ${chId} as deleted: ${e.message}`);
     return false;
+  }
+}
+
+// scanBatch only ever needed the counts, not all 13k rows
+export async function countChannels() {
+  try {
+    const r = await db.one("SELECT count(*)::int AS n FROM channels");
+    return r.n;
+  } catch (e) {
+    log.error(`fail counting channels: ${e.message}`);
+    return 0;
+  }
+}
+
+export async function countStale(cutoff) {
+  try {
+    const r = await db.one(
+      `
+      SELECT count(*)::int AS n FROM channels
+      WHERE last_members_update IS NULL OR last_members_update < $1
+    `,
+      [cutoff]
+    );
+    return r.n;
+  } catch (e) {
+    log.error(`fail counting stale channels: ${e.message}`);
+    return 0;
   }
 }
 

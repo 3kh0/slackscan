@@ -3,7 +3,8 @@
 import "dotenv/config";
 import { WebClient } from "@slack/web-api";
 import {
-  listAll,
+  countChannels,
+  countStale,
   markScanned,
   getTime,
   testDb,
@@ -36,7 +37,7 @@ async function scanBatch(client) {
     done++;
     if (done > 1) await sleep(2000);
     try {
-      const result = await scanMembers(ch.channel_id, client);
+      const result = await scanMembers(ch.channel_id, client, ch.channel_name);
       if (result.success) {
         log.success(
           `[${done}/${total}] Scanned ${ch.channel_name} (${ch.channel_id}) and found ${result.count} users`
@@ -49,7 +50,7 @@ async function scanBatch(client) {
         );
         ltd++;
         await sleep(120000);
-        const retry = await scanMembers(ch.channel_id, client);
+        const retry = await scanMembers(ch.channel_id, client, ch.channel_name);
         if (retry.success) {
           log.success(
             `[${done}/${total}] Retried ${ch.channel_name} (${ch.channel_id}) and found ${retry.count} users`
@@ -131,13 +132,7 @@ async function scanBatch(client) {
     log.info(`Rate limited ${ltd} times`);
   }
 
-  const allChans = await listAll();
-  const now = getTime();
-  const cutoff = now - 3600;
-  const left = allChans.filter(
-    (ch) => !ch.last_members_update || ch.last_members_update < cutoff
-  ).length;
-
+  const left = await countStale(getTime() - 3600);
   const hasMore = left > total;
 
   return {
@@ -179,9 +174,9 @@ async function _scan() {
   }
 
   const client = new WebClient(token);
-  const chans = await listAll();
+  const totalChannels = await countChannels();
 
-  if (chans.length === 0) {
+  if (totalChannels === 0) {
     log.error("No channels found, please index channels first");
     process.exit(1);
   }
@@ -216,7 +211,7 @@ async function _scan() {
 
   return {
     success: true,
-    totalChannels: chans.length,
+    totalChannels,
     channelsScanned: totScanned,
     successes: totOk,
     errors: totErr,
