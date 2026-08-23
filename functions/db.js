@@ -135,7 +135,6 @@ export async function updateCh(chId, memberIds) {
   try {
     await Promise.all(memberIds.map((uid) => addCh(uid, chId)));
     await markScanned(chId);
-    await markUpdated(chId);
     return true;
   } catch (e) {
     log.error(`Error updating members for channel ${chId}: ${e.message}`);
@@ -170,7 +169,7 @@ export async function markScanned(chId) {
     await db.none(
       `
       UPDATE channels 
-      SET last_scanned = $1
+      SET last_scanned = $1, last_members_update = $1
       WHERE channel_id = $2
     `,
       [ts, chId]
@@ -178,26 +177,6 @@ export async function markScanned(chId) {
     return true;
   } catch (e) {
     log.error(`fail updating scan time for channel ${chId}: ${e.message}`);
-    return false;
-  }
-}
-
-export async function markUpdated(chId) {
-  try {
-    const ts = getTime();
-    await db.none(
-      `
-      UPDATE channels 
-      SET last_members_update = $1
-      WHERE channel_id = $2
-    `,
-      [ts, chId]
-    );
-    return true;
-  } catch (e) {
-    log.error(
-      `fail updating members update time for channel ${chId}: ${e.message}`
-    );
     return false;
   }
 }

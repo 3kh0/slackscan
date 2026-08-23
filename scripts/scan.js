@@ -5,7 +5,6 @@ import { WebClient } from "@slack/web-api";
 import {
   listAll,
   markScanned,
-  markUpdated,
   getTime,
   testDb,
   listOldest,
@@ -43,7 +42,6 @@ async function scanBatch(client) {
           `[${done}/${total}] Scanned ${ch.channel_name} (${ch.channel_id}) and found ${result.count} users`
         );
         await markScanned(ch.channel_id);
-        await markUpdated(ch.channel_id);
         ok++;
       } else if (result.error && result.error.includes("rate_limited")) {
         log.warn(
@@ -57,7 +55,6 @@ async function scanBatch(client) {
             `[${done}/${total}] Retried ${ch.channel_name} (${ch.channel_id}) and found ${retry.count} users`
           );
           await markScanned(ch.channel_id);
-          await markUpdated(ch.channel_id);
           ok++;
         } else {
           const retryErrorMsg = retry.error || "Unknown error";
