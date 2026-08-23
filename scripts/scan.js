@@ -35,7 +35,7 @@ async function scanBatch(client) {
 
   for (const ch of toScan) {
     done++;
-    if (done > 1) await sleep(2000);
+    if (done > 1) await sleep(1000);
     try {
       const result = await scanMembers(ch.channel_id, client, ch.channel_name);
       if (result.success) {
@@ -202,7 +202,7 @@ async function _scan() {
         log.info(
           `${res.remainingToScan} more channels need scanning, continuing with next batch...`
         );
-        await sleep(10000);
+        await sleep(2000);
       }
     }
 
