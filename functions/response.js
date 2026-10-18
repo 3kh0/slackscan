@@ -15,6 +15,12 @@ function formatTrust(trustData) {
   return labels[trustData.trust_level] || null;
 }
 
+function formatNda(status) {
+  if (status === "signed") return "Signed";
+  if (status === "not_signed") return "Not signed";
+  return "Unavailable";
+}
+
 function d(user) {
   const startDate = user.profile?.start_date;
   if (!startDate) return null;
@@ -42,7 +48,7 @@ function d(user) {
   return `${dateStr} (${years} year${years > 1 ? "s" : ""} ago)`;
 }
 
-export function formatUsr(user, channels = [], receiveTime = null, slackDelay = null, hcaStatus = null, trustData = null) {
+export function formatUsr(user, channels = [], receiveTime = null, slackDelay = null, hcaStatus = null, trustData = null, ndaStatus = null) {
   try {
     const executionStart = receiveTime || Date.now();
     const startDate = d(user);
@@ -68,7 +74,7 @@ export function formatUsr(user, channels = [], receiveTime = null, slackDelay = 
             user.profile.display_name || "Not set"
           }\n*Real Name:* ${user.real_name || "Not set"}\n*Username:* ${
             user.name
-          }\n*Email:* ${user.profile.email || "Not available"}${startDate ? `\n*Joined:* ${startDate}` : ""}${hcaStatus && hcaStatus !== "unknown" ? `\n*HCA Status:* ${hcaStatus}` : ""}${trust ? `\n*Hackatime Trust:* ${trust}` : ""}`,
+          }\n*Email:* ${user.profile.email || "Not available"}${startDate ? `\n*Joined:* ${startDate}` : ""}${hcaStatus && hcaStatus !== "unknown" ? `\n*HCA Status:* ${hcaStatus}` : ""}${trust ? `\n*Hackatime Trust:* ${trust}` : ""}\n*NDA Status:* ${formatNda(ndaStatus)}`,
         },
         accessory: {
           type: "image",
@@ -182,7 +188,7 @@ export function formatErr(msg = "An unknown error occurred") {
   };
 }
 
-export function formatChsOnly(user, channels = [], receiveTime = null, slackDelay = null, hcaStatus = null, trustData = null) {
+export function formatChsOnly(user, channels = [], receiveTime = null, slackDelay = null, hcaStatus = null, trustData = null, ndaStatus = null) {
   try {
     const executionStart = receiveTime || Date.now();
     const startDate = d(user);
@@ -192,7 +198,7 @@ export function formatChsOnly(user, channels = [], receiveTime = null, slackDela
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `Channels for ${silent(user)} (${user.real_name || user.name})${startDate ? ` - Joined: ${startDate}` : ""}${hcaStatus && hcaStatus !== "unknown" ? ` - HCA: ${hcaStatus}` : ""}${trust ? ` - Trust: ${trust}` : ""}`,
+          text: `Channels for ${silent(user)} (${user.real_name || user.name})${startDate ? ` - Joined: ${startDate}` : ""}${hcaStatus && hcaStatus !== "unknown" ? ` - HCA: ${hcaStatus}` : ""}${trust ? ` - Trust: ${trust}` : ""} - NDA: ${formatNda(ndaStatus)}`,
         },
       },
       {
@@ -298,7 +304,7 @@ export function formatChsOnly(user, channels = [], receiveTime = null, slackDela
   }
 }
 
-export function formatOut(user, receiveTime = null, slackDelay = null, hcaStatus = null, trustData = null) {
+export function formatOut(user, receiveTime = null, slackDelay = null, hcaStatus = null, trustData = null, ndaStatus = null) {
   try {
     const executionStart = receiveTime || Date.now();
     const startDate = d(user);
@@ -324,7 +330,7 @@ export function formatOut(user, receiveTime = null, slackDelay = null, hcaStatus
             user.profile.display_name || "Not set"
           }\n*Real Name:* ${user.real_name || "Not set"}\n*Username:* ${
             user.name
-          }\n*Email:* ${user.profile.email || "Not available"}${startDate ? `\n*Joined:* ${startDate}` : ""}${hcaStatus && hcaStatus !== "unknown" ? `\n*HCA Status:* ${hcaStatus}` : ""}${trust ? `\n*Hackatime Trust:* ${trust}` : ""}`,
+          }\n*Email:* ${user.profile.email || "Not available"}${startDate ? `\n*Joined:* ${startDate}` : ""}${hcaStatus && hcaStatus !== "unknown" ? `\n*HCA Status:* ${hcaStatus}` : ""}${trust ? `\n*Hackatime Trust:* ${trust}` : ""}\n*NDA Status:* ${formatNda(ndaStatus)}`,
         },
         accessory: {
           type: "image",

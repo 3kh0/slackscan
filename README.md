@@ -17,6 +17,7 @@ Using SlackScan is easy as DMing the bot a user mention (if you are in the Hack 
 - Yoinks members in said channels
 - If people are schizo about privacy, you can opt out
 - If you're in Hack Club, you can look up people's HCA status
+- Shows [NDA signing status](https://nda.hackclub.com/) alongside user details
 - Find people's username, which commonly includes part of their real email (not a bug, just a feature)
 - Better than stalking people manually
 

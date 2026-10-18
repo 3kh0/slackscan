@@ -5,6 +5,7 @@ import {
   formatOut,
 } from "./response.js";
 import { getUserData } from "./db.js";
+import { checkNda } from "./nda.js";
 import log from "./logger.js";
 
 export async function check(userId) {
@@ -71,11 +72,12 @@ export async function getUsr(id, client, channelsOnly = false, messageTs = null)
       setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)
     );
 
-    const [res, userData, hcaStatus, trustData] = await Promise.all([
+    const [res, userData, hcaStatus, trustData, ndaStatus] = await Promise.all([
       Promise.race([client.users.info({ user: id }), timeout(10000, "users.info")]),
       getUserData(id),
       check(id),
       checkTrust(id),
+      checkNda(id),
     ]);
 
     const { channels, optedOut } = userData;
@@ -83,15 +85,15 @@ export async function getUsr(id, client, channelsOnly = false, messageTs = null)
 
     if (optedOut) {
       log.info(`lookup done user=${id} (opted out) slack=${slackDelay ?? "?"}ms process=${Date.now() - receiveTime}ms`);
-      return formatOut(res.user, receiveTime, slackDelay, hcaStatus, trustData);
+      return formatOut(res.user, receiveTime, slackDelay, hcaStatus, trustData, ndaStatus);
     }
 
     if (channelsOnly) {
       log.info(`lookup done user=${id} (channelsOnly) slack=${slackDelay ?? "?"}ms process=${Date.now() - receiveTime}ms`);
-      return formatChsOnly(res.user, channels, receiveTime, slackDelay, hcaStatus, trustData);
+      return formatChsOnly(res.user, channels, receiveTime, slackDelay, hcaStatus, trustData, ndaStatus);
     } else {
       log.info(`lookup done user=${id} slack=${slackDelay ?? "?"}ms process=${Date.now() - receiveTime}ms`);
-      return formatUsr(res.user, channels, receiveTime, slackDelay, hcaStatus, trustData);
+      return formatUsr(res.user, channels, receiveTime, slackDelay, hcaStatus, trustData, ndaStatus);
     }
   } catch (err) {
     log.error(`fail on return ${err.message}\n${err.stack}`);
